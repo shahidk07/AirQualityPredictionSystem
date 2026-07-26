@@ -1,0 +1,546 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>AirIntel | AI-Powered Air Quality Prediction</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: 'Inter', sans-serif;
+            background:#0b1118;
+        }
+
+        .glass{
+            background:rgba(15,23,42,.65);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .green-gradient{
+            background:linear-gradient(90deg,#16d84a,#63e247);
+        }
+
+        .text-gradient{
+            background:linear-gradient(90deg,#22c55e,#65f15b);
+            background-clip:text;
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+    </style>
+</head>
+
+<body class="text-white">
+<div class="w-full px-6 pt-4">
+
+    <nav class="glass rounded-2xl px-6 py-4">
+
+        <div class="flex items-center justify-between">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+
+                <img src="{% static 'images/leaf1.svg' %}"
+                     class="w-12 h-12"
+                     alt="logo">
+
+                <div>
+
+                    <h1 class="text-3xl font-bold">
+                        Air<span class="text-gradient">Intel</span>
+                    </h1>
+
+                    <p class="text-gray-400 text-sm">
+                        AI-Powered Air Quality Prediction
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Navigation -->
+
+            <ul class="hidden lg:flex items-center gap-10 font-medium ml-16">
+
+                <li><a href="#" class="text-green-400">Home</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">How It Works</a></li>
+                <li><a href="#">Insights</a></li>
+                <li><a href="#">Contact</a></li>
+
+            </ul>
+
+            <!-- Buttons -->
+
+            <div class="flex gap-3">
+
+                <button class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition">
+                    Explore Insights
+                </button>
+
+                <button class="green-gradient px-6 py-2 rounded-lg font-semibold text-black">
+                    Get Started
+                </button>
+
+            </div>
+
+        </div>
+
+    </nav>
+    <section class="relative w-full px-6 mt-12">
+    
+         <!-- Background Glow -->
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+
+        <div class="absolute top-10 left-20 w-80 h-80 bg-green-500/10 blur-[120px] rounded-full"></div>
+
+        <div class="absolute bottom-0 right-20 w-96 h-96 bg-cyan-500/5 blur-[150px] rounded-full"></div>
+
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+        <!-- Left Content -->
+        <div>
+         <h1 class="text-6xl font-extrabold leading-tight">
+
+    AI-Powered
+
+    <br>
+
+    <span class="text-gradient">
+        Air Quality
+    </span>
+
+    Prediction
+
+</h1>
+<p class="mt-8 text-xl text-gray-400 leading-9 max-w-xl">
+
+    Predict the Air Quality Index (AQI) for any city using
+    advanced machine learning models and environmental data.
+
+</p>
+<div class="flex gap-10 mt-10">
+
+    <div>
+
+        <h3 class="font-semibold text-green-400">
+            Machine Learning
+        </h3>
+
+        <p class="text-gray-400 text-sm mt-2">
+            Accurate AI predictions
+        </p>
+
+    </div>
+
+    <div>
+
+        <h3 class="font-semibold text-green-400">
+            Health Focused
+        </h3>
+
+        <p class="text-gray-400 text-sm mt-2">
+            Stay informed
+        </p>
+
+    </div>
+
+    <div>
+
+        <h3 class="font-semibold text-green-400">
+            Environmental Impact
+        </h3>
+
+        <p class="text-gray-400 text-sm mt-2">
+            Cleaner future
+        </p>
+
+    </div>
+
+</div>
+<button
+    class="green-gradient mt-10 px-8 py-4 rounded-xl font-semibold text-black text-lg">
+
+    Start Prediction →
+
+</button>
+        </div>
+
+        <!-- Right Illustration -->
+        <div>
+<div class="glass rounded-3xl h-[550px] relative overflow-hidden p-8">
+
+    <!-- Glowing Circle -->
+    <div class="absolute w-72 h-72 rounded-full bg-green-500/20 blur-3xl top-16 left-1/2 -translate-x-1/2"></div>
+
+    <!-- AQI Card -->
+    <div class="relative mt-8 mx-auto w-64 glass rounded-2xl p-6 text-center">
+
+        <p class="text-gray-400 text-sm">Current AQI</p>
+
+        <h2 class="text-6xl font-bold text-green-400 mt-2">
+            42
+        </h2>
+
+        <p class="text-green-300 mt-2 font-medium">
+            Good
+        </p>
+
+    </div>
+
+    <!-- Mini Stats -->
+    <div class="relative mt-10 grid grid-cols-2 gap-4">
+
+        <div class="glass rounded-xl p-4">
+            <p class="text-gray-400 text-sm">Humidity</p>
+            <h3 class="text-2xl font-semibold mt-2">65%</h3>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+            <p class="text-gray-400 text-sm">Temperature</p>
+            <h3 class="text-2xl font-semibold mt-2">28°C</h3>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+            <p class="text-gray-400 text-sm">Wind</p>
+            <h3 class="text-2xl font-semibold mt-2">12 km/h</h3>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+            <p class="text-gray-400 text-sm">PM2.5</p>
+            <h3 class="text-2xl font-semibold mt-2">18 µg/m³</h3>
+        </div>
+
+    </div>
+
+</div>
+        </div>
+
+    </div>
+
+</section>
+<section class="w-full px-6 py-12">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+        <!-- Card 1 -->
+        <div
+    class="glass rounded-2xl p-6 border border-white/5 hover:border-green-500/40 transition-all duration-300 hover:-translate-y-2">
+
+    <div class="flex items-start gap-4">
+
+        <!-- Icon -->
+
+        <div
+            class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center">
+
+            <i data-lucide="chart-no-axes-column-increasing"
+               class="text-green-400 w-7 h-7"></i>
+
+        </div>
+
+        <!-- Content -->
+
+        <div>
+
+            <h3 class="text-lg font-semibold">
+                Accurate Predictions
+            </h3>
+
+            <p class="mt-2 text-gray-400 text-sm leading-6">
+
+                ML models trained on real environmental data for high accuracy.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <!-- Card 2 -->
+<div
+    class="glass rounded-2xl p-6 border border-white/5 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-2">
+
+    <div class="flex items-start gap-4">
+
+        <div
+            class="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center">
+
+            <i data-lucide="building-2"
+               class="text-purple-400 w-7 h-7"></i>
+
+        </div>
+
+        <div>
+
+            <h3 class="text-lg font-semibold">
+                Multi-City Support
+            </h3>
+
+            <p class="mt-2 text-gray-400 text-sm leading-6">
+                Predict AQI for multiple cities with a fast and seamless experience.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <!-- Card 3 -->
+<div
+    class="glass rounded-2xl p-6 border border-white/5 hover:border-orange-500/40 transition-all duration-300 hover:-translate-y-2">
+
+    <div class="flex items-start gap-4">
+
+        <div
+            class="w-14 h-14 rounded-full bg-orange-500/10 flex items-center justify-center">
+
+            <i data-lucide="shield-plus"
+               class="text-orange-400 w-7 h-7"></i>
+
+        </div>
+
+        <div>
+
+            <h3 class="text-lg font-semibold">
+                Health Recommendations
+            </h3>
+
+            <p class="mt-2 text-gray-400 text-sm leading-6">
+                Get practical health guidance based on predicted air quality levels.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <!-- Card 4 -->
+<div
+    class="glass rounded-2xl p-6 border border-white/5 hover:border-blue-500/40 transition-all duration-300 hover:-translate-y-2">
+
+    <div class="flex items-start gap-4">
+
+        <div
+            class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center">
+
+            <i data-lucide="chart-column"
+               class="text-blue-400 w-7 h-7"></i>
+
+        </div>
+
+        <div>
+
+            <h3 class="text-lg font-semibold">
+                Data-Driven Insights
+            </h3>
+
+            <p class="mt-2 text-gray-400 text-sm leading-6">
+                Explore trends and patterns with interactive charts and analytics.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+    </div>
+
+</section>
+
+<!-- ================= WHY AIR QUALITY MATTERS ================= -->
+
+<section class="w-full px-6 py-16">
+
+    <div class="glass relative overflow-hidden rounded-3xl h-[480px]">
+
+        <!-- Background Image -->
+        <img
+            src="{% static 'images/earth_bg.png' %}"
+            alt="Earth"
+            class="absolute inset-0
+                   w-full h-full
+                   object-cover
+                   object-right
+                   pointer-events-none
+                   select-none">
+
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-[#0b1118]/40"></div>
+
+        <!-- Left Gradient -->
+        <div
+            class="absolute inset-0
+                   bg-gradient-to-r
+                   from-[#0b1118]
+                   via-[#0b1118]/95
+                   via-55%
+                   to-transparent">
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 h-full flex items-center">
+
+            <div class="max-w-3xl px-10">
+
+                <!-- Heading -->
+                <div class="flex items-center gap-3">
+
+                    <i data-lucide="leaf"
+                       class="w-7 h-7 text-green-400"></i>
+
+                    <h2 class="text-4xl lg:text-5xl font-bold">
+                        Why Air Quality
+                        <span class="text-gradient">Matters</span>
+                    </h2>
+
+                </div>
+
+                <!-- Description -->
+                <p class="mt-5 text-lg leading-8 text-gray-300 max-w-2xl">
+
+                    Poor air quality affects millions of lives every day.
+                    Staying informed helps protect your health, your family,
+                    and contributes to a cleaner, healthier future.
+
+                </p>
+
+                <!-- Statistics -->
+                <div class="grid grid-cols-3 gap-8 mt-8 max-w-2xl">
+
+                    <!-- Stat 1 -->
+                    <div>
+
+                        <div class="w-11 h-11 rounded-full
+                                    bg-green-500/10
+                                    border border-green-500/20
+                                    flex items-center justify-center">
+
+                            <i data-lucide="users"
+                               class="w-5 h-5 text-green-400"></i>
+
+                        </div>
+
+                        <h3 class="mt-3 text-3xl font-bold">
+                            1.6M+
+                        </h3>
+
+                        <p class="mt-1 text-sm text-gray-400">
+                            Lives affected annually
+                        </p>
+
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div>
+
+                        <div class="w-11 h-11 rounded-full
+                                    bg-green-500/10
+                                    border border-green-500/20
+                                    flex items-center justify-center">
+
+                            <i data-lucide="heart"
+                               class="w-5 h-5 text-green-400"></i>
+
+                        </div>
+
+                        <h3 class="mt-3 text-3xl font-bold">
+                            90%
+                        </h3>
+
+                        <p class="mt-1 text-sm text-gray-400">
+                            Breathe polluted air
+                        </p>
+
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div>
+
+                        <div class="w-11 h-11 rounded-full
+                                    bg-green-500/10
+                                    border border-green-500/20
+                                    flex items-center justify-center">
+
+                            <i data-lucide="leaf"
+                               class="w-5 h-5 text-green-400"></i>
+
+                        </div>
+
+                        <h3 class="mt-3 text-3xl font-bold">
+                            7M+
+                        </h3>
+
+                        <p class="mt-1 text-sm text-gray-400">
+                            Deaths every year
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Bottom Message -->
+                <div class="mt-8 max-w-2xl">
+
+                    <div class="flex items-center gap-4
+                                rounded-xl
+                                border border-green-500/20
+                                bg-green-500/10
+                                backdrop-blur-sm
+                                px-5 py-3">
+
+                        <div class="w-12 h-12 rounded-full
+                                    bg-green-500/20
+                                    flex items-center justify-center
+                                    flex-shrink-0">
+
+                            <i data-lucide="leaf"
+                               class="w-6 h-6 text-green-400"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="text-xl font-semibold">
+
+                                Together, we can build a cleaner,
+                                healthier future.
+
+                            </h3>
+
+                            <p class="text-sm text-gray-400 mt-1">
+
+                                Every breath matters. Every action counts.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>
