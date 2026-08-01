@@ -69,3 +69,6 @@ def home(request):
   
     # print(model.predict(sample))
     return render(request,'home.html')
+
+def predict(request):
+    return render(request,'predict.html')
