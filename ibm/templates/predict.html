@@ -1,0 +1,995 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Predictor | Predict Air Quality Index</title>
+    <meta name="description" content="Predict the Air Quality Index (AQI) for your selected city using environmental, weather and seasonal information.">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b1120;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* Glass card */
+        .glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .glass-card {
+            background: rgba(17, 25, 40, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #e2e8f0;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .glass-input:focus {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .glass-input-sm {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+        .glass-input-sm:focus {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .text-gradient {
+            background: linear-gradient(90deg, #22c55e, #65f15b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .green-gradient {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+        }
+
+        /* Toggle button */
+        .toggle-btn {
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(15,23,42,0.6);
+            color: #94a3b8;
+        }
+        .toggle-btn.active {
+            background: #22c55e;
+            color: #000;
+            border-color: #22c55e;
+        }
+
+        /* Section number badge */
+        .section-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Pollutant bar */
+        .pollutant-bar-bg {
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .pollutant-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        /* AQI Scale dot */
+        .aqi-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+        /* Predict button glow */
+        .predict-btn {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            position: relative;
+            overflow: hidden;
+        }
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+        }
+        .predict-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Navbar active link */
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #22c55e;
+            border-radius: 1px;
+        }
+
+        /* Small input card */
+        .input-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 7px 10px;
+        }
+        .input-card label {
+            font-size: 10px;
+            color: #64748b;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .input-card input {
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Footer tip card */
+        .tip-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .tip-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(34, 197, 94, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="font-inter">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="w-full px-5 py-3">
+    <div class="glass rounded-2xl px-6 py-3 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                <i data-lucide="leaf" class="w-5 h-5 text-green-400"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-tight">AQI <span class="text-gradient">Predictor</span></h1>
+                <p class="text-[10px] text-gray-500">Breathe Better, Live Better</p>
+            </div>
+        </div>
+
+        <!-- Nav Links -->
+        <ul class="hidden lg:flex items-center gap-8 text-sm font-medium">
+            <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">Dashboard</a></li>
+            <li><a href="#" class="nav-link active text-green-400">AQI Prediction</a></li>
+            <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">History</a></li>
+            <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">About</a></li>
+            <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">Contact</a></li>
+        </ul>
+
+        <!-- User -->
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-sm font-bold text-black">U</div>
+            <span class="text-sm text-gray-300 hidden sm:inline">Hello, User</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="px-6 mt-2">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold">Predict <span class="text-gradient">Air Quality Index</span></h1>
+            <p class="text-sm text-gray-500 mt-1">Enter environmental, weather and seasonal information to predict the AQI for your selected city.</p>
+        </div>
+        <div class="flex items-center gap-6">
+            <!-- Location -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-green-400"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-500">Your Location</p>
+                    <p class="text-sm font-semibold text-green-400">Delhi, India</p>
+                </div>
+            </div>
+            <!-- Date -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-500">Date & Time</p>
+                    <p class="text-sm font-semibold" id="currentDateTime">23 May 2025, 10:30 AM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="px-6 mt-5 pb-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- ===== LEFT PANEL – INPUT FORM ===== -->
+        <form method="POST" id="predictForm" class="lg:col-span-4 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+            {% csrf_token %}
+
+            <!-- 1. Location & Time -->
+            <div class="glass-card p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="section-num">1</span>
+                    <h3 class="font-semibold text-sm">Location & Time</h3>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <!-- City -->
+                    <div>
+                        <label class="text-[11px] text-gray-500 mb-1 block">City</label>
+                        <select id="city" name="city" class="glass-input w-full text-sm" style="padding:8px 10px;">
+                            <option>Delhi</option>
+                            <option>Mumbai</option>
+                            <option>Bengaluru</option>
+                            <option>Chennai</option>
+                            <option>Kolkata</option>
+                            <option>Hyderabad</option>
+                            <option>Ahmedabad</option>
+                            <option>Jaipur</option>
+                            <option>Lucknow</option>
+                            <option>Patna</option>
+                            <option>Bhopal</option>
+                            <option>Chandigarh</option>
+                            <option>Dehradun</option>
+                            <option>Gurugram</option>
+                            <option>Guwahati</option>
+                            <option>Raipur</option>
+                            <option>Ranchi</option>
+                            <option>Shimla</option>
+                            <option>Thiruvananthapuram</option>
+                            <option>Visakhapatnam</option>
+                            <option>Aizawl</option>
+                            <option>Bhubaneswar</option>
+                            <option>Gangtok</option>
+                            <option>Imphal</option>
+                            <option>Itanagar</option>
+                            <option>Kohima</option>
+                            <option>Panaji</option>
+                            <option>Shillong</option>
+                        </select>
+                    </div>
+                    <!-- Month -->
+                    <div>
+                        <label class="text-[11px] text-gray-500 mb-1 block">Month</label>
+                        <select id="month" name="month" class="glass-input w-full text-sm" style="padding:8px 10px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5" selected>May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <!-- Is Weekend -->
+                    <div>
+                        <label class="text-[11px] text-gray-500 mb-1 block">Is Weekend?</label>
+                        <input type="hidden" id="weekendInput" name="is_weekend" value="1">
+                        <div class="flex gap-1 mt-1">
+                            <button type="button" class="toggle-btn active" id="weekendYes" onclick="setToggle('weekend', true)">Yes</button>
+                            <button type="button" class="toggle-btn" id="weekendNo" onclick="setToggle('weekend', false)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Weather Information -->
+            <div class="glass-card p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="section-num">2</span>
+                    <h3 class="font-semibold text-sm">Weather Information</h3>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="input-card">
+                        <label>Humidity (%)</label>
+                        <input type="number" id="humidity" name="humidity" value="55" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>Dew Point (°C)</label>
+                        <input type="number" id="dewPoint" name="dew_point" value="18.2" step="0.1">
+                    </div>
+                    <div class="input-card">
+                        <label>Wind Speed (km/h)</label>
+                        <input type="number" id="windSpeed" name="wind_speed" value="12" step="0.1">
+                    </div>
+                    <div class="input-card">
+                        <label>Precipitation (mm)</label>
+                        <input type="number" id="precipitation" name="precipitation" value="0.0" step="0.1">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <div class="input-card">
+                        <label>Pressure MSL (hPa)</label>
+                        <input type="number" id="pressureMSL" name="pressure_msl" value="1013" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>Surface Pressure (hPa)</label>
+                        <input type="number" id="surfacePressure" name="surface_pressure" value="1010" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>Solar Radiation (W/m²)</label>
+                        <input type="number" id="solarRadiation" name="solar_radiation" value="320" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>Cloud Cover (%)</label>
+                        <input type="number" id="cloudCover" name="cloud_cover" value="40" step="1">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <div class="input-card">
+                        <label>Sunshine (seconds)</label>
+                        <input type="number" id="sunshine" name="sunshine" value="3600" step="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Air Pollutants -->
+            <div class="glass-card p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="section-num">3</span>
+                    <h3 class="font-semibold text-sm">Air Pollutants</h3>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="input-card">
+                        <label>PM2.5 (µg/m³)</label>
+                        <input type="number" id="pm25" name="pm25" value="35" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>PM10 (µg/m³)</label>
+                        <input type="number" id="pm10" name="pm10" value="60" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>PM Ratio</label>
+                        <input type="number" id="pmRatio" name="pm_ratio" value="0.58" step="0.01">
+                    </div>
+                    <div class="input-card">
+                        <label>CO (µg/m³)</label>
+                        <input type="number" id="co" name="co" value="450" step="1">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <div class="input-card">
+                        <label>NO₂ (µg/m³)</label>
+                        <input type="number" id="no2" name="no2" value="18" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>SO₂ (µg/m³)</label>
+                        <input type="number" id="so2" name="so2" value="12" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>O₃ (µg/m³)</label>
+                        <input type="number" id="o3" name="o3" value="30" step="1">
+                    </div>
+                    <div class="input-card">
+                        <label>Dust (µg/m³)</label>
+                        <input type="number" id="dust" name="dust" value="100" step="1">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <div class="input-card">
+                        <label>AOD</label>
+                        <input type="number" id="aod" name="aod" value="0.35" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Seasonal Factors -->
+            <div class="glass-card p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="section-num">4</span>
+                    <h3 class="font-semibold text-sm">Seasonal Factors</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium">Festival Period</p>
+                            <p class="text-[10px] text-gray-500">Is it a festival period?</p>
+                        </div>
+                        <input type="hidden" id="festivalInput" name="festival_period" value="0">
+                        <div class="flex gap-1">
+                            <button type="button" class="toggle-btn" id="festivalYes" onclick="setToggle('festival', true)">Yes</button>
+                            <button type="button" class="toggle-btn active" id="festivalNo" onclick="setToggle('festival', false)">No</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium">Crop Burning Season</p>
+                            <p class="text-[10px] text-gray-500">Is it crop burning season?</p>
+                        </div>
+                        <input type="hidden" id="cropInput" name="crop_burning" value="1">
+                        <div class="flex gap-1">
+                            <button type="button" class="toggle-btn active" id="cropYes" onclick="setToggle('crop', true)">Yes</button>
+                            <button type="button" class="toggle-btn" id="cropNo" onclick="setToggle('crop', false)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predict Button -->
+            <button type="submit" id="predictBtn" class="predict-btn w-full py-3 rounded-xl text-black font-bold text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-green-500/20 transition-all">
+                <i data-lucide="activity" class="w-5 h-5"></i>
+                Predict AQI
+            </button>
+        </form>
+
+        <!-- ===== RIGHT PANEL – RESULTS ===== -->
+        <div class="lg:col-span-8 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+
+            <!-- Top Row: Prediction Result + AQI Category -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                <!-- Prediction Result Card -->
+                <div class="lg:col-span-7 glass-card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-semibold text-base">Prediction <span class="text-gradient">Result</span></h3>
+                        <div class="flex gap-2">
+                            <button class="flex items-center gap-1.5 text-xs text-gray-400 border border-white/10 rounded-lg px-3 py-1.5 hover:border-green-500/40 transition">
+                                <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save Result
+                            </button>
+                            <button class="flex items-center gap-1.5 text-xs text-gray-400 border border-white/10 rounded-lg px-3 py-1.5 hover:border-green-500/40 transition">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Gauge -->
+                        <div class="flex justify-center items-center">
+                            <div class="w-full max-w-[260px]">
+                                <svg id="gauge" viewBox="0 0 420 360">
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#28d84f"/>
+                                            <stop offset="28%" stop-color="#b7d700"/>
+                                            <stop offset="50%" stop-color="#ffd400"/>
+                                            <stop offset="68%" stop-color="#ff9d00"/>
+                                            <stop offset="86%" stop-color="#ff4c38"/>
+                                            <stop offset="100%" stop-color="#8f3cff"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M40 220 A170 170 0 0 1 380 220" fill="none" stroke="url(#gradient)" stroke-width="28" stroke-linecap="round"/>
+                                    <g id="ticks"></g>
+                                    <g id="labels" font-size="18" fill="white" font-family="Inter, Arial" text-anchor="middle"></g>
+                                    <g id="needle">
+                                        <line x1="210" y1="220" x2="210" y2="120" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                                        <circle cx="210" cy="220" r="8" fill="white"/>
+                                    </g>
+                                    <text id="gaugeValue" x="210" y="290" text-anchor="middle" font-size="74" font-weight="700" fill="white">178</text>
+                                    <text id="gaugeLabel" x="210" y="325" text-anchor="middle" font-size="24" fill="#ff9834" font-weight="600">Unhealthy</text>
+                                    <text id="gaugeSub" x="210" y="350" text-anchor="middle" font-size="14" fill="#ffbd66">for Sensitive Groups</text>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Health Recommendation -->
+                        <div>
+                            <h4 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+                                <i data-lucide="heart-pulse" class="w-4 h-4 text-red-400"></i>
+                                Health Recommendation
+                            </h4>
+                            <ul class="space-y-2.5 text-xs text-gray-400 leading-relaxed" id="healthRecommendations">
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
+                                    Sensitive groups should reduce prolonged or heavy outdoor exertion.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
+                                    Consider wearing a mask if you are outdoors for long periods.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
+                                    Keep windows closed to prevent polluted air from coming indoors.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AQI Category + Scale -->
+                <div class="lg:col-span-5 space-y-4">
+                    <!-- Category -->
+                    <div class="glass-card p-5">
+                        <h4 class="text-xs text-gray-500 mb-2">AQI Category</h4>
+                        <div class="inline-block rounded-lg px-5 py-2 font-bold text-sm" id="aqiCategoryBadge" style="background: #ff9834; color: #000;">
+                            UNHEALTHY
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3 leading-relaxed" id="aqiCategoryDesc">
+                            Members of sensitive groups may experience health effects. The general public is less likely to be affected.
+                        </p>
+                    </div>
+                    <!-- Scale -->
+                    <div class="glass-card p-5">
+                        <h4 class="text-xs text-gray-500 mb-3">AQI Scale</h4>
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#28d84f;"></span><span class="text-gray-500">0 - 50</span><span class="ml-auto text-green-400 font-medium">Good</span></div>
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#b7d700;"></span><span class="text-gray-500">51 - 100</span><span class="ml-auto text-yellow-400 font-medium">Moderate</span></div>
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#ff9d00;"></span><span class="text-gray-500">101 - 150</span><span class="ml-auto text-orange-400 font-medium">Unhealthy for Sensitive Groups</span></div>
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#ff4c38;"></span><span class="text-gray-500">151 - 200</span><span class="ml-auto text-red-400 font-medium">Unhealthy</span></div>
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#b83cff;"></span><span class="text-gray-500">201 - 300</span><span class="ml-auto text-purple-400 font-medium">Very Unhealthy</span></div>
+                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#7e0023;"></span><span class="text-gray-500">301+</span><span class="ml-auto text-rose-500 font-medium">Hazardous</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Pollutant Summary + Weather Summary -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                <!-- Pollutant Summary -->
+                <div class="lg:col-span-7 glass-card p-5">
+                    <h3 class="font-semibold text-sm mb-4">Pollutant Summary</h3>
+                    <table class="w-full text-xs" id="pollutantTable">
+                        <thead>
+                            <tr class="text-gray-500 border-b border-white/5">
+                                <th class="text-left py-2 font-medium">Pollutant</th>
+                                <th class="text-left py-2 font-medium" style="width:40%">Concentration (µg/m³)</th>
+                                <th class="text-right py-2 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pollutantBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Weather Summary -->
+                <div class="lg:col-span-5 glass-card p-5">
+                    <h3 class="font-semibold text-sm mb-4">Weather Summary</h3>
+                    <div class="space-y-3" id="weatherSummary">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="px-6 pb-6 mt-2">
+    <div class="glass-card p-5">
+        <div class="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start">
+            <!-- Did you know -->
+            <div class="lg:col-span-1">
+                <h4 class="font-bold text-sm mb-1">Did you know?</h4>
+                <p class="text-[10px] text-gray-500 leading-relaxed">Planting more trees and reducing vehicle emissions can significantly improve air quality in your city.</p>
+            </div>
+            <!-- Tips -->
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i data-lucide="trees" class="w-5 h-5 text-green-400"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold">Plant Trees</p>
+                    <p class="text-[10px] text-gray-500">Improve air quality naturally</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i data-lucide="bus" class="w-5 h-5 text-green-400"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold">Use Public Transport</p>
+                    <p class="text-[10px] text-gray-500">Reduce emissions from vehicles</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i data-lucide="flame-kindling" class="w-5 h-5 text-orange-400"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold">Avoid Burning Waste</p>
+                    <p class="text-[10px] text-gray-500">Prevent harmful pollutants</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold">Wear a Mask</p>
+                    <p class="text-[10px] text-gray-500">Protect yourself on high AQI days</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i data-lucide="droplets" class="w-5 h-5 text-cyan-400"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold">Stay Hydrated</p>
+                    <p class="text-[10px] text-gray-500">Drink more water and stay healthy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== TOGGLE BUTTONS =====
+const toggleState = { weekend: true, festival: false, crop: true };
+
+function setToggle(name, value) {
+    toggleState[name] = value;
+    const yesBtn = document.getElementById(name + 'Yes');
+    const noBtn = document.getElementById(name + 'No');
+    const hiddenInput = document.getElementById(name + 'Input');
+    if (value) {
+        yesBtn.classList.add('active');
+        noBtn.classList.remove('active');
+    } else {
+        yesBtn.classList.remove('active');
+        noBtn.classList.add('active');
+    }
+    if (hiddenInput) {
+        hiddenInput.value = value ? '1' : '0';
+    }
+}
+
+// ===== GAUGE =====
+function initGauge(value) {
+    const max = 300;
+    const center = { x: 210, y: 220 };
+    const radius = 140;
+
+    function polar(angle, r) {
+        const rad = (angle - 90) * Math.PI / 180;
+        return {
+            x: center.x + r * Math.cos(rad),
+            y: center.y + r * Math.sin(rad)
+        };
+    }
+
+    const ticks = document.getElementById('ticks');
+    ticks.innerHTML = '';
+    for (let i = 0; i <= 30; i++) {
+        const angle = -90 + i * 6;
+        const outer = polar(angle, 170);
+        const inner = polar(angle, i % 5 === 0 ? 155 : 162);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', outer.x);
+        line.setAttribute('y1', outer.y);
+        line.setAttribute('x2', inner.x);
+        line.setAttribute('y2', inner.y);
+        line.setAttribute('stroke', '#cfd4dd');
+        line.setAttribute('stroke-width', i % 5 === 0 ? 2.2 : 1);
+        ticks.appendChild(line);
+    }
+
+    const labels = document.getElementById('labels');
+    labels.innerHTML = '';
+    [[0, -90], [50, -60], [100, -30], [150, 0], [200, 30], ['300+', 90]].forEach(item => {
+        const p = polar(item[1], 120);
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', p.x);
+        t.setAttribute('y', p.y);
+        t.textContent = item[0];
+        labels.appendChild(t);
+    });
+
+    const clampedValue = Math.min(value, max);
+    const angle = -90 + (clampedValue / max) * 180;
+    document.getElementById('needle').setAttribute('transform', `rotate(${angle} ${center.x} ${center.y})`);
+
+    document.getElementById('gaugeValue').textContent = Math.round(value);
+
+    // Set category
+    const cat = getAQICategory(value);
+    document.getElementById('gaugeLabel').textContent = cat.label;
+    document.getElementById('gaugeLabel').setAttribute('fill', cat.color);
+    document.getElementById('gaugeSub').textContent = cat.sub;
+    document.getElementById('gaugeSub').setAttribute('fill', cat.subColor);
+
+    // Category badge
+    document.getElementById('aqiCategoryBadge').textContent = cat.badge;
+    document.getElementById('aqiCategoryBadge').style.background = cat.badgeBg;
+    document.getElementById('aqiCategoryDesc').textContent = cat.desc;
+}
+
+function getAQICategory(v) {
+    if (v <= 50) return {
+        label: 'Good', sub: '', color: '#28d84f', subColor: '#28d84f',
+        badge: 'GOOD', badgeBg: '#28d84f',
+        desc: 'Air quality is satisfactory, and air pollution poses little or no risk.'
+    };
+    if (v <= 100) return {
+        label: 'Moderate', sub: '', color: '#b7d700', subColor: '#b7d700',
+        badge: 'MODERATE', badgeBg: '#b7d700',
+        desc: 'Air quality is acceptable. However, there may be a risk for some people.'
+    };
+    if (v <= 150) return {
+        label: 'Unhealthy', sub: 'for Sensitive Groups', color: '#ff9d00', subColor: '#ffbd66',
+        badge: 'UNHEALTHY FOR SENSITIVE GROUPS', badgeBg: '#ff9d00',
+        desc: 'Members of sensitive groups may experience health effects. The general public is less likely to be affected.'
+    };
+    if (v <= 200) return {
+        label: 'Unhealthy', sub: 'for Sensitive Groups', color: '#ff9834', subColor: '#ffbd66',
+        badge: 'UNHEALTHY', badgeBg: '#ff9834',
+        desc: 'Members of sensitive groups may experience health effects. The general public is less likely to be affected.'
+    };
+    if (v <= 300) return {
+        label: 'Very Unhealthy', sub: '', color: '#b83cff', subColor: '#b83cff',
+        badge: 'VERY UNHEALTHY', badgeBg: '#b83cff',
+        desc: 'Health alert: The risk of health effects is increased for everyone.'
+    };
+    return {
+        label: 'Hazardous', sub: '', color: '#7e0023', subColor: '#7e0023',
+        badge: 'HAZARDOUS', badgeBg: '#7e0023',
+        desc: 'Health warning of emergency conditions: everyone is more likely to be affected.'
+    };
+}
+
+// ===== POLLUTANT TABLE =====
+function updatePollutantTable() {
+    const pollutants = [
+        { name: 'PM2.5', value: parseFloat(document.getElementById('pm25').value) || 35, max: 250, color: '#22c55e' },
+        { name: 'PM10', value: parseFloat(document.getElementById('pm10').value) || 60, max: 250, color: '#ff4c38' },
+        { name: 'CO', value: parseFloat(document.getElementById('co').value) || 450, max: 2000, color: '#22c55e' },
+        { name: 'NO₂', value: parseFloat(document.getElementById('no2').value) || 18, max: 250, color: '#22c55e' },
+        { name: 'SO₂', value: parseFloat(document.getElementById('so2').value) || 12, max: 250, color: '#22c55e' },
+        { name: 'O₃', value: parseFloat(document.getElementById('o3').value) || 30, max: 250, color: '#22c55e' },
+        { name: 'Dust', value: parseFloat(document.getElementById('dust').value) || 100, max: 250, color: '#ff4c38' },
+        { name: 'AOD', value: parseFloat(document.getElementById('aod').value) || 0.35, max: 2, color: '#22c55e' },
+    ];
+
+    const tbody = document.getElementById('pollutantBody');
+    tbody.innerHTML = '';
+
+    pollutants.forEach(p => {
+        const pct = Math.min((p.value / p.max) * 100, 100);
+        const status = getStatus(p.name, p.value);
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-white/5';
+        tr.innerHTML = `
+            <td class="py-2.5 text-gray-300 font-medium">${p.name}</td>
+            <td class="py-2.5">
+                <div class="flex items-center gap-2">
+                    <div class="pollutant-bar-bg flex-1">
+                        <div class="pollutant-bar-fill" style="width:${pct}%;background:${status.color}"></div>
+                    </div>
+                    <span class="text-gray-400 w-10 text-right">${p.value}</span>
+                </div>
+            </td>
+            <td class="py-2.5 text-right font-medium" style="color:${status.color}">${status.text}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function getStatus(name, value) {
+    // Simple thresholds
+    if (name === 'PM2.5') {
+        if (value <= 30) return { text: 'Good', color: '#22c55e' };
+        if (value <= 60) return { text: 'Good', color: '#22c55e' };
+        if (value <= 90) return { text: 'Moderate', color: '#eab308' };
+        return { text: 'Poor', color: '#ff4c38' };
+    }
+    if (name === 'PM10') {
+        if (value <= 50) return { text: 'Good', color: '#22c55e' };
+        if (value <= 100) return { text: 'Moderate', color: '#eab308' };
+        return { text: 'Poor', color: '#ff4c38' };
+    }
+    if (name === 'CO') {
+        if (value <= 1000) return { text: 'Good', color: '#22c55e' };
+        return { text: 'Poor', color: '#ff4c38' };
+    }
+    if (name === 'Dust') {
+        if (value <= 50) return { text: 'Good', color: '#22c55e' };
+        if (value <= 150) return { text: 'Moderate', color: '#eab308' };
+        return { text: 'Poor', color: '#ff4c38' };
+    }
+    if (name === 'AOD') {
+        if (value <= 0.4) return { text: 'Good', color: '#22c55e' };
+        if (value <= 0.8) return { text: 'Moderate', color: '#eab308' };
+        return { text: 'Poor', color: '#ff4c38' };
+    }
+    // Default for NO2, SO2, O3
+    if (value <= 40) return { text: 'Good', color: '#22c55e' };
+    if (value <= 80) return { text: 'Moderate', color: '#eab308' };
+    return { text: 'Poor', color: '#ff4c38' };
+}
+
+// ===== WEATHER SUMMARY =====
+function updateWeatherSummary() {
+    const weatherData = [
+        { icon: 'droplets', label: 'Humidity', value: (document.getElementById('humidity').value || '55') + ' %', color: 'text-blue-400' },
+        { icon: 'wind', label: 'Wind Speed', value: (document.getElementById('windSpeed').value || '12') + ' km/h', color: 'text-cyan-400' },
+        { icon: 'thermometer', label: 'Temperature (Dew Point)', value: (document.getElementById('dewPoint').value || '18.2') + ' °C', color: 'text-orange-400' },
+        { icon: 'gauge', label: 'Pressure MSL', value: (document.getElementById('pressureMSL').value || '1013') + ' hPa', color: 'text-purple-400' },
+        { icon: 'cloud', label: 'Cloud Cover', value: (document.getElementById('cloudCover').value || '40') + ' %', color: 'text-gray-400' },
+        { icon: 'sun', label: 'Sunshine', value: (document.getElementById('sunshine').value || '3600') + ' sec', color: 'text-yellow-400' },
+        { icon: 'cloud-rain', label: 'Precipitation', value: (document.getElementById('precipitation').value || '0.0') + ' mm', color: 'text-blue-300' },
+        { icon: 'sun-dim', label: 'Solar Radiation', value: (document.getElementById('solarRadiation').value || '320') + ' W/m²', color: 'text-amber-400' },
+    ];
+
+    const container = document.getElementById('weatherSummary');
+    container.innerHTML = '';
+
+    weatherData.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between py-1 border-b border-white/5';
+        div.innerHTML = `
+            <div class="flex items-center gap-2">
+                <i data-lucide="${w.icon}" class="w-4 h-4 ${w.color}"></i>
+                <span class="text-xs text-gray-400">${w.label}</span>
+            </div>
+            <span class="text-xs font-semibold">${w.value}</span>
+        `;
+        container.appendChild(div);
+    });
+
+    // Re-init lucide icons for dynamically added elements
+    lucide.createIcons();
+}
+
+// ===== DATE TIME =====
+function updateDateTime() {
+    const now = new Date();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = now.getDate();
+    const month = months[now.getMonth()];
+    const year = now.getFullYear();
+    let hours = now.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('currentDateTime').textContent = `${day} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
+}
+
+// ===== PREDICT =====
+function predictAQI() {
+    // For demo, use a static value. In production, this would call the Django backend.
+    const aqiValue = 178;
+    initGauge(aqiValue);
+    updatePollutantTable();
+    updateWeatherSummary();
+    updateHealthRecommendations(aqiValue);
+}
+
+function updateHealthRecommendations(aqi) {
+    const container = document.getElementById('healthRecommendations');
+    let recs = [];
+    if (aqi <= 50) {
+        recs = [
+            'Air quality is ideal for outdoor activities.',
+            'Enjoy your time outside!',
+            'No health precautions needed.'
+        ];
+    } else if (aqi <= 100) {
+        recs = [
+            'Air quality is acceptable for most people.',
+            'Unusually sensitive people should consider reducing prolonged outdoor exertion.',
+            'Keep windows open for ventilation.'
+        ];
+    } else if (aqi <= 200) {
+        recs = [
+            'Sensitive groups should reduce prolonged or heavy outdoor exertion.',
+            'Consider wearing a mask if you are outdoors for long periods.',
+            'Keep windows closed to prevent polluted air from coming indoors.'
+        ];
+    } else {
+        recs = [
+            'Everyone should avoid prolonged outdoor exertion.',
+            'Wear an N95 mask when going outside.',
+            'Use air purifiers indoors and keep all windows shut.'
+        ];
+    }
+    const dotColor = aqi <= 50 ? 'bg-green-400' : aqi <= 100 ? 'bg-yellow-400' : aqi <= 200 ? 'bg-orange-400' : 'bg-red-400';
+    container.innerHTML = recs.map(r => `
+        <li class="flex items-start gap-2">
+            <span class="w-1.5 h-1.5 rounded-full ${dotColor} mt-1.5 flex-shrink-0"></span>
+            ${r}
+        </li>
+    `).join('');
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    updateDateTime();
+    initGauge(178);
+    updatePollutantTable();
+    updateWeatherSummary();
+    lucide.createIcons();
+});
+</script>
+
+</body>
+</html>
