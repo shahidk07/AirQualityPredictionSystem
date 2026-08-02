@@ -12,19 +12,18 @@ model=joblib.load(model_path)
 # Create your views here.
 def home(request):
 
-    import pandas as pd
     
-    # print(model.predict(sample))
     return render(request,'home.html')
             
     
 def predict(request):
+    print("Predict view called")
     if(request.method=="POST"):
         df=process_data(request)
+        result = model.predict(df)[0]
+        print(result)
+        return render(request,'predict.html',{"result":result})
     return render(request,'predict.html')
-
-
-
 
 
 

@@ -69,7 +69,7 @@ def process_data(request):
         "Crop_Burning_Season": int(request.POST.get("crop_burning")),
     }
 
-    data.update([features])
+    data.update(features)
     df = pd.DataFrame([data])
 
     return df

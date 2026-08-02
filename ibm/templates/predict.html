@@ -298,7 +298,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
         <!-- ===== LEFT PANEL – INPUT FORM ===== -->
-        <form method="POST" id="predictForm" class="lg:col-span-4 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <form method="POST" action="/predict/" id="predictForm" class="lg:col-span-4 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
             {% csrf_token %}
 
             <!-- 1. Location & Time -->
@@ -553,7 +553,7 @@
                                         <line x1="210" y1="220" x2="210" y2="120" stroke="white" stroke-width="5" stroke-linecap="round"/>
                                         <circle cx="210" cy="220" r="8" fill="white"/>
                                     </g>
-                                    <text id="gaugeValue" x="210" y="290" text-anchor="middle" font-size="74" font-weight="700" fill="white">178</text>
+                                    <text id="gaugeValue" x="210" y="290" text-anchor="middle" font-size="74" font-weight="700" fill="white">{{result}}</text>
                                     <text id="gaugeLabel" x="210" y="325" text-anchor="middle" font-size="24" fill="#ff9834" font-weight="600">Unhealthy</text>
                                     <text id="gaugeSub" x="210" y="350" text-anchor="middle" font-size="14" fill="#ffbd66">for Sensitive Groups</text>
                                 </svg>
@@ -704,6 +704,9 @@
 
 <script>
 // ===== TOGGLE BUTTONS =====
+var aqi=document.getElementById("gaugeValue")
+aqi=parseInt({{result}})
+
 const toggleState = { weekend: true, festival: false, crop: true };
 
 function setToggle(name, value) {
@@ -937,8 +940,7 @@ function updateDateTime() {
 // ===== PREDICT =====
 function predictAQI() {
     // For demo, use a static value. In production, this would call the Django backend.
-    const aqiValue = 178;
-    initGauge(aqiValue);
+    initGauge(aqi);
     updatePollutantTable();
     updateWeatherSummary();
     updateHealthRecommendations(aqiValue);
@@ -984,7 +986,7 @@ function updateHealthRecommendations(aqi) {
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     updateDateTime();
-    initGauge(178);
+    initGauge(aqi);
     updatePollutantTable();
     updateWeatherSummary();
     lucide.createIcons();
