@@ -294,13 +294,7 @@
         <div class="flex items-center gap-6">
             <!-- Location -->
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <i data-lucide="map-pin" class="w-4 h-4 text-green-400"></i>
-                </div>
-                <div>
-                    <p class="text-[10px] text-gray-500">Your Location</p>
-                    <p class="text-sm font-semibold text-green-400">Delhi, India</p>
-                </div>
+    
             </div>
             <!-- Date -->
             <div class="flex items-center gap-2">
@@ -320,21 +314,21 @@
 <div class="px-6 mt-5 pb-4">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        <!-- ===== LEFT PANEL – INPUT FORM ===== -->
-        <form method="POST" action="/predict/" id="predictForm" class="lg:col-span-4 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <!-- ===== LEFT PANEL – INPUT FORM (Col 4) ===== -->
+        <form method="POST" action="/predict/" id="predictForm" class="lg:col-span-4 flex flex-col h-full" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
             {% csrf_token %}
-
-            <!-- 1. Location & Time -->
-            <div class="glass-card p-4">
-                <div class="flex items-center gap-2 mb-3">
+            <div class="flex-1 space-y-3">
+            <!-- 1. Location, Time & Weather Information -->
+            <div class="glass-card p-3 " >
+                <div class="flex items-center gap-2 mb-2">
                     <span class="section-num">1</span>
-                    <h3 class="font-semibold text-sm">Location & Time</h3>
+                    <h3 class="font-semibold text-sm">Location, Time & Weather</h3>
                 </div>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-3 gap-2 mb-3">
                     <!-- City -->
                     <div>
-                        <label class="text-[11px] text-gray-500 mb-1 block">City</label>
-                        <select id="city" name="city" class="glass-input w-full text-sm" style="padding:8px 10px;">
+                        <label class="text-[10px] text-gray-500 mb-0.5 block">City</label>
+                        <select id="city" name="city" class="glass-input w-full text-xs" style="padding:6px 8px;">
                             <option>Delhi</option>
                             <option>Mumbai</option>
                             <option>Bengaluru</option>
@@ -367,8 +361,8 @@
                     </div>
                     <!-- Month -->
                     <div>
-                        <label class="text-[11px] text-gray-500 mb-1 block">Month</label>
-                        <select id="month" name="month" class="glass-input w-full text-sm" style="padding:8px 10px;">
+                        <label class="text-[10px] text-gray-500 mb-0.5 block">Month</label>
+                        <select id="month" name="month" class="glass-input w-full text-xs" style="padding:6px 8px;">
                             <option value="1">January</option>
                             <option value="2">February</option>
                             <option value="3">March</option>
@@ -385,297 +379,284 @@
                     </div>
                     <!-- Is Weekend -->
                     <div>
-                        <label class="text-[11px] text-gray-500 mb-1 block">Is Weekend?</label>
+                        <label class="text-[10px] text-gray-500 mb-0.5 block">Is Weekend?</label>
                         <input type="hidden" id="weekendInput" name="is_weekend" value="1">
-                        <div class="flex gap-1 mt-1">
-                            <button type="button" class="toggle-btn active" id="weekendYes" onclick="setToggle('weekend', true)">Yes</button>
-                            <button type="button" class="toggle-btn" id="weekendNo" onclick="setToggle('weekend', false)">No</button>
+                        <div class="flex gap-1">
+                            <button type="button" class="toggle-btn active text-xs py-1 px-3" id="weekendYes" onclick="setToggle('weekend', true)">Yes</button>
+                            <button type="button" class="toggle-btn text-xs py-1 px-3" id="weekendNo" onclick="setToggle('weekend', false)">No</button>
                         </div>
                     </div>
                 </div>
+                <div class="grid grid-cols-4 gap-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Humidity (%)</label>
+                        <input type="number" id="humidity" name="humidity" value="55" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Dew Point (°C)</label>
+                        <input type="number" id="dewPoint" name="dew_point" value="18.2" step="0.1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Wind (km/h)</label>
+                        <input type="number" id="windSpeed" name="wind_speed" value="12" step="0.1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Precip (mm)</label>
+                        <input type="number" id="precipitation" name="precipitation" value="0.0" step="0.1" class="!text-xs">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Pressure MSL</label>
+                        <input type="number" id="pressureMSL" name="pressure_msl" value="1013" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Surface Press</label>
+                        <input type="number" id="surfacePressure" name="surface_pressure" value="1010" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Solar Rad</label>
+                        <input type="number" id="solarRadiation" name="solar_radiation" value="320" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Cloud Cover</label>
+                        <input type="number" id="cloudCover" name="cloud_cover" value="40" step="1" class="!text-xs">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Sunshine (s)</label>
+                        <input type="number" id="sunshine" name="sunshine" value="3600" step="100" class="!text-xs">
+                    </div>
+                </div>
             </div>
 
-            <!-- 2. Weather Information -->
-            <div class="glass-card p-4">
-                <div class="flex items-center gap-2 mb-3">
+            <!-- 2. Air Pollutants -->
+            <div class="glass-card p-3">
+                <div class="flex items-center gap-2 mb-2">
                     <span class="section-num">2</span>
-                    <h3 class="font-semibold text-sm">Weather Information</h3>
-                </div>
-                <div class="grid grid-cols-4 gap-2">
-                    <div class="input-card">
-                        <label>Humidity (%)</label>
-                        <input type="number" id="humidity" name="humidity" value="55" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>Dew Point (°C)</label>
-                        <input type="number" id="dewPoint" name="dew_point" value="18.2" step="0.1">
-                    </div>
-                    <div class="input-card">
-                        <label>Wind Speed (km/h)</label>
-                        <input type="number" id="windSpeed" name="wind_speed" value="12" step="0.1">
-                    </div>
-                    <div class="input-card">
-                        <label>Precipitation (mm)</label>
-                        <input type="number" id="precipitation" name="precipitation" value="0.0" step="0.1">
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 gap-2 mt-2">
-                    <div class="input-card">
-                        <label>Pressure MSL (hPa)</label>
-                        <input type="number" id="pressureMSL" name="pressure_msl" value="1013" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>Surface Pressure (hPa)</label>
-                        <input type="number" id="surfacePressure" name="surface_pressure" value="1010" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>Solar Radiation (W/m²)</label>
-                        <input type="number" id="solarRadiation" name="solar_radiation" value="320" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>Cloud Cover (%)</label>
-                        <input type="number" id="cloudCover" name="cloud_cover" value="40" step="1">
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 gap-2 mt-2">
-                    <div class="input-card">
-                        <label>Sunshine (seconds)</label>
-                        <input type="number" id="sunshine" name="sunshine" value="3600" step="100">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Air Pollutants -->
-            <div class="glass-card p-4">
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="section-num">3</span>
                     <h3 class="font-semibold text-sm">Air Pollutants</h3>
                 </div>
-                <div class="grid grid-cols-4 gap-2">
-                    <div class="input-card">
-                        <label>PM2.5 (µg/m³)</label>
-                        <input type="number" id="pm25" name="pm25" value="35" step="1">
+                <div class="grid grid-cols-4 gap-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">PM2.5</label>
+                        <input type="number" id="pm25" name="pm25" value="35" step="1" class="!text-xs">
                     </div>
-                    <div class="input-card">
-                        <label>PM10 (µg/m³)</label>
-                        <input type="number" id="pm10" name="pm10" value="60" step="1">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">PM10</label>
+                        <input type="number" id="pm10" name="pm10" value="60" step="1" class="!text-xs">
                     </div>
-                    <div class="input-card">
-                        <label>PM Ratio</label>
-                        <input type="number" id="pmRatio" name="pm_ratio" value="0.58" step="0.01">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">PM Ratio</label>
+                        <input type="number" id="pmRatio" name="pm_ratio" value="0.58" step="0.01" class="!text-xs">
                     </div>
-                    <div class="input-card">
-                        <label>CO (µg/m³)</label>
-                        <input type="number" id="co" name="co" value="450" step="1">
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 gap-2 mt-2">
-                    <div class="input-card">
-                        <label>NO₂ (µg/m³)</label>
-                        <input type="number" id="no2" name="no2" value="18" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>SO₂ (µg/m³)</label>
-                        <input type="number" id="so2" name="so2" value="12" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>O₃ (µg/m³)</label>
-                        <input type="number" id="o3" name="o3" value="30" step="1">
-                    </div>
-                    <div class="input-card">
-                        <label>Dust (µg/m³)</label>
-                        <input type="number" id="dust" name="dust" value="100" step="1">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">CO</label>
+                        <input type="number" id="co" name="co" value="450" step="1" class="!text-xs">
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-2 mt-2">
-                    <div class="input-card">
-                        <label>AOD</label>
-                        <input type="number" id="aod" name="aod" value="0.35" step="0.01">
+                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">NO₂</label>
+                        <input type="number" id="no2" name="no2" value="18" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">SO₂</label>
+                        <input type="number" id="so2" name="so2" value="12" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">O₃</label>
+                        <input type="number" id="o3" name="o3" value="30" step="1" class="!text-xs">
+                    </div>
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">Dust</label>
+                        <input type="number" id="dust" name="dust" value="100" step="1" class="!text-xs">
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                    <div class="input-card !p-1.5">
+                        <label class="!text-[9px]">AOD</label>
+                        <input type="number" id="aod" name="aod" value="0.35" step="0.01" class="!text-xs">
                     </div>
                 </div>
             </div>
 
-            <!-- 4. Seasonal Factors -->
-            <div class="glass-card p-4">
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="section-num">4</span>
+            <!-- 3. Seasonal Factors -->
+            <div class="glass-card p-3">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="section-num">3</span>
                     <h3 class="font-semibold text-sm">Seasonal Factors</h3>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium">Festival Period</p>
-                            <p class="text-[10px] text-gray-500">Is it a festival period?</p>
+                            <p class="text-xs font-medium">Festival</p>
                         </div>
                         <input type="hidden" id="festivalInput" name="festival_period" value="0">
                         <div class="flex gap-1">
-                            <button type="button" class="toggle-btn" id="festivalYes" onclick="setToggle('festival', true)">Yes</button>
-                            <button type="button" class="toggle-btn active" id="festivalNo" onclick="setToggle('festival', false)">No</button>
+                            <button type="button" class="toggle-btn text-[10px] py-1 px-2" id="festivalYes" onclick="setToggle('festival', true)">Yes</button>
+                            <button type="button" class="toggle-btn active text-[10px] py-1 px-2" id="festivalNo" onclick="setToggle('festival', false)">No</button>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium">Crop Burning Season</p>
-                            <p class="text-[10px] text-gray-500">Is it crop burning season?</p>
+                            <p class="text-xs font-medium">Crop Burning</p>
                         </div>
                         <input type="hidden" id="cropInput" name="crop_burning" value="1">
                         <div class="flex gap-1">
-                            <button type="button" class="toggle-btn active" id="cropYes" onclick="setToggle('crop', true)">Yes</button>
-                            <button type="button" class="toggle-btn" id="cropNo" onclick="setToggle('crop', false)">No</button>
+                            <button type="button" class="toggle-btn active text-[10px] py-1 px-2" id="cropYes" onclick="setToggle('crop', true)">Yes</button>
+                            <button type="button" class="toggle-btn text-[10px] py-1 px-2" id="cropNo" onclick="setToggle('crop', false)">No</button>
                         </div>
                     </div>
                 </div>
             </div>
-
+            </div>
             <!-- Predict Button -->
-            <button type="submit" id="predictBtn" class="predict-btn w-full py-3 rounded-xl text-black font-bold text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-green-500/20 transition-all">
+            <button type="submit" id="predictBtn" class="predict-btn w-full py-2.5 rounded-xl text-black font-bold text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-green-500/20 transition-all mt-2">
                 <i data-lucide="activity" class="w-5 h-5"></i>
                 Predict AQI
             </button>
         </form>
 
-        <!-- ===== RIGHT PANEL – RESULTS ===== -->
-        <div class="lg:col-span-8 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <!-- ===== MIDDLE PANEL – PREDICTION (Col 5) ===== -->
+        <div class="lg:col-span-5 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
 
-            <!-- Top Row: Prediction Result + AQI Category -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-                <!-- Prediction Result Card -->
-                <div class="lg:col-span-7 glass-card p-5">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-semibold text-base">Prediction <span class="text-gradient">Result</span></h3>
-                        <div class="flex gap-2">
-                            <button class="flex items-center gap-1.5 text-xs text-gray-400 border border-white/10 rounded-lg px-3 py-1.5 hover:border-green-500/40 transition">
-                                <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save Result
-                            </button>
-                            <button class="flex items-center gap-1.5 text-xs text-gray-400 border border-white/10 rounded-lg px-3 py-1.5 hover:border-green-500/40 transition">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download PDF
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Gauge -->
-                        <div class="flex justify-center items-center">
-                            <div class="meter-wrapper">
-                                <svg class="meter-svg" viewBox="0 0 340 220">
-                                    <defs>
-                                        <linearGradient id="arcGradient" x1="0%" y1="50%" x2="100%" y2="50%">
-                                            <stop offset="0%" stop-color="#22c55e"/>
-                                            <stop offset="25%" stop-color="#eab308"/>
-                                            <stop offset="50%" stop-color="#f97316"/>
-                                            <stop offset="75%" stop-color="#ef4444"/>
-                                            <stop offset="100%" stop-color="#c026d3"/>
-                                        </linearGradient>
-                                        <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
-                                            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-                                            <feMerge>
-                                                <feMergeNode in="blur"/>
-                                                <feMergeNode in="SourceGraphic"/>
-                                            </feMerge>
-                                        </filter>
-                                        <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
-                                            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
-                                            <feMerge>
-                                                <feMergeNode in="blur"/>
-                                                <feMergeNode in="SourceGraphic"/>
-                                            </feMerge>
-                                        </filter>
-                                    </defs>
-                                    <path d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="20" stroke-linecap="round"/>
-                                    <path d="M 30 185 A 140 140 0 0 1 310 185" fill="none" stroke="rgba(255,255,255,0.015)" stroke-width="1" stroke-linecap="round"/>
-                                    <path d="M 20 185 A 150 150 0 0 1 320 185" fill="none" stroke="rgba(255,255,255,0.01)" stroke-width="1" stroke-linecap="round"/>
-                                    <path id="bgArc" d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="url(#arcGradient)" stroke-width="12" stroke-linecap="round" opacity="0.25"/>
-                                    <path id="activeArc" d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="url(#arcGradient)" stroke-width="12" stroke-linecap="round" filter="url(#arcGlow)"/>
-                                    <circle id="indicatorDot" cx="45" cy="185" r="8" fill="#22c55e" filter="url(#dotGlow)"/>
-                                    <circle id="indicatorDotInner" cx="45" cy="185" r="3" fill="#fff" opacity="0.9"/>
-                                    <circle cx="295" cy="185" r="6" fill="#c026d3" filter="url(#dotGlow)"/>
-                                    <circle cx="295" cy="185" r="2.5" fill="#fff" opacity="0.6"/>
-                                </svg>
-                                <div class="meter-label">
-                                    <div class="aqi-title">AQI</div>
-                                    <div class="aqi-value" id="gaugeValue">{{result|default:"0"}}</div>
-                                    <div class="aqi-category" id="gaugeLabel" style="color:#22c55e;">Good</div>
-                                    <div class="aqi-range" id="gaugeRange">0 - 50</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Health Recommendation -->
-                        <div>
-                            <h4 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
-                                <i data-lucide="heart-pulse" class="w-4 h-4 text-red-400"></i>
-                                Health Recommendation
-                            </h4>
-                            <ul class="space-y-2.5 text-xs text-gray-400 leading-relaxed" id="healthRecommendations">
-                                <li class="flex items-start gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
-                                    Sensitive groups should reduce prolonged or heavy outdoor exertion.
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
-                                    Consider wearing a mask if you are outdoors for long periods.
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 flex-shrink-0"></span>
-                                    Keep windows closed to prevent polluted air from coming indoors.
-                                </li>
-                            </ul>
-                        </div>
+            <!-- Prediction Result Card -->
+            <div class="glass-card p-4 flex flex-col h-auto">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="font-semibold text-sm">Prediction <span class="text-gradient">Result</span></h3>
+                    <div class="flex gap-2">
+                        <button class="flex items-center gap-1 text-[10px] text-gray-400 border border-white/10 rounded-lg px-2 py-1 hover:border-green-500/40 transition">
+                            <i data-lucide="bookmark" class="w-3 h-3"></i> Save
+                        </button>
                     </div>
                 </div>
 
-                <!-- AQI Category + Scale -->
-                <div class="lg:col-span-5 space-y-4">
-                    <!-- Category -->
-                    <div class="glass-card p-5">
-                        <h4 class="text-xs text-gray-500 mb-2">AQI Category</h4>
-                        <div class="inline-block rounded-lg px-5 py-2 font-bold text-sm" id="aqiCategoryBadge" style="background: #ff9834; color: #000;">
-                            UNHEALTHY
+                <div class="flex flex-col gap-2 flex-grow">
+                    <!-- Gauge -->
+                    <div class="flex justify-center items-center">
+                        <div class="meter-wrapper" style="height: 150px; max-width: 250px; transform: scale(0.9); transform-origin: top center; margin-bottom: -25px;">
+                            <svg class="meter-svg" viewBox="0 0 340 220">
+                                <defs>
+                                    <linearGradient id="arcGradient" x1="0%" y1="50%" x2="100%" y2="50%">
+                                        <stop offset="0%" stop-color="#22c55e"/>
+                                        <stop offset="25%" stop-color="#eab308"/>
+                                        <stop offset="50%" stop-color="#f97316"/>
+                                        <stop offset="75%" stop-color="#ef4444"/>
+                                        <stop offset="100%" stop-color="#c026d3"/>
+                                    </linearGradient>
+                                    <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+                                        <feMerge>
+                                            <feMergeNode in="blur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                    <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                                        <feMerge>
+                                            <feMergeNode in="blur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <path d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="20" stroke-linecap="round"/>
+                                <path d="M 30 185 A 140 140 0 0 1 310 185" fill="none" stroke="rgba(255,255,255,0.015)" stroke-width="1" stroke-linecap="round"/>
+                                <path d="M 20 185 A 150 150 0 0 1 320 185" fill="none" stroke="rgba(255,255,255,0.01)" stroke-width="1" stroke-linecap="round"/>
+                                <path id="bgArc" d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="url(#arcGradient)" stroke-width="12" stroke-linecap="round" opacity="0.25"/>
+                                <path id="activeArc" d="M 45 185 A 125 125 0 0 1 295 185" fill="none" stroke="url(#arcGradient)" stroke-width="12" stroke-linecap="round" filter="url(#arcGlow)"/>
+                                <circle id="indicatorDot" cx="45" cy="185" r="8" fill="#22c55e" filter="url(#dotGlow)"/>
+                                <circle id="indicatorDotInner" cx="45" cy="185" r="3" fill="#fff" opacity="0.9"/>
+                                <circle cx="295" cy="185" r="6" fill="#c026d3" filter="url(#dotGlow)"/>
+                                <circle cx="295" cy="185" r="2.5" fill="#fff" opacity="0.6"/>
+                            </svg>
+                            <div class="meter-label">
+                                <div class="aqi-title">AQI</div>
+                                <div class="aqi-value" id="gaugeValue">{{result|default:"0"}}</div>
+                                <div class="aqi-category" id="gaugeLabel" style="color:#22c55e;">Good</div>
+                                <div class="aqi-range" id="gaugeRange">0 - 50</div>
+                            </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-3 leading-relaxed" id="aqiCategoryDesc">
-                            Members of sensitive groups may experience health effects. The general public is less likely to be affected.
-                        </p>
                     </div>
-                    <!-- Scale -->
-                    <div class="glass-card p-5">
-                        <h4 class="text-xs text-gray-500 mb-3">AQI Scale</h4>
-                        <div class="space-y-1.5 text-xs">
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#28d84f;"></span><span class="text-gray-500">0 - 50</span><span class="ml-auto text-green-400 font-medium">Good</span></div>
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#b7d700;"></span><span class="text-gray-500">51 - 100</span><span class="ml-auto text-yellow-400 font-medium">Moderate</span></div>
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#ff9d00;"></span><span class="text-gray-500">101 - 150</span><span class="ml-auto text-orange-400 font-medium">Unhealthy for Sensitive Groups</span></div>
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#ff4c38;"></span><span class="text-gray-500">151 - 200</span><span class="ml-auto text-red-400 font-medium">Unhealthy</span></div>
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#b83cff;"></span><span class="text-gray-500">201 - 300</span><span class="ml-auto text-purple-400 font-medium">Very Unhealthy</span></div>
-                            <div class="flex items-center gap-2"><span class="aqi-dot" style="background:#7e0023;"></span><span class="text-gray-500">301+</span><span class="ml-auto text-rose-500 font-medium">Hazardous</span></div>
-                        </div>
+
+                    <!-- Health Recommendation -->
+                    <div>
+                        <h4 class="text-xs font-semibold mb-2 flex items-center gap-1.5">
+                            <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-red-400"></i>
+                            Recommendation
+                        </h4>
+                        <ul class="space-y-1.5 text-[11px] text-gray-400 leading-relaxed" id="healthRecommendations">
+                            <li class="flex items-start gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1 flex-shrink-0"></span>
+                                Sensitive groups should reduce prolonged outdoor exertion.
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1 flex-shrink-0"></span>
+                                Consider wearing a mask if outdoors for long periods.
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1 flex-shrink-0"></span>
+                                Keep windows closed to prevent polluted air from coming indoors.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Row: Pollutant Summary + Weather Summary -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <!-- Pollutant Summary -->
+            <div class="glass-card p-4">
+                <h3 class="font-semibold text-sm mb-3">Pollutant Summary</h3>
+                <table class="w-full text-[11px]" id="pollutantTable">
+                    <thead>
+                        <tr class="text-gray-500 border-b border-white/5">
+                            <th class="text-left py-1.5 font-medium">Pollutant</th>
+                            <th class="text-left py-1.5 font-medium" style="width:40%">Conc. (µg/m³)</th>
+                            <th class="text-right py-1.5 font-medium">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pollutantBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                <!-- Pollutant Summary -->
-                <div class="lg:col-span-7 glass-card p-5">
-                    <h3 class="font-semibold text-sm mb-4">Pollutant Summary</h3>
-                    <table class="w-full text-xs" id="pollutantTable">
-                        <thead>
-                            <tr class="text-gray-500 border-b border-white/5">
-                                <th class="text-left py-2 font-medium">Pollutant</th>
-                                <th class="text-left py-2 font-medium" style="width:40%">Concentration (µg/m³)</th>
-                                <th class="text-right py-2 font-medium">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pollutantBody">
-                            <!-- Filled by JS -->
-                        </tbody>
-                    </table>
+        <!-- ===== RIGHT PANEL – DETAILS (Col 3) ===== -->
+        <div class="lg:col-span-3 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+            <div class="glass-card p-4 flex flex-col h-full space-y-4">
+                
+                <!-- Category -->
+                <div>
+                    <h4 class="text-xs text-gray-500 mb-2">AQI Category</h4>
+                    <div class="inline-block rounded-lg px-4 py-1.5 font-bold text-xs" id="aqiCategoryBadge" style="background: #ff9834; color: #000;">
+                        UNHEALTHY
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-2 leading-relaxed" id="aqiCategoryDesc">
+                        Members of sensitive groups may experience health effects. The general public is less likely to be affected.
+                    </p>
                 </div>
 
+                <hr class="border-white/5">
+
+                <!-- Scale -->
+                <div>
+                    <h4 class="text-xs text-gray-500 mb-2">AQI Scale</h4>
+                    <div class="space-y-1 text-[10px]">
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#28d84f;"></span><span class="text-gray-500">0-50</span><span class="ml-auto text-green-400 font-medium">Good</span></div>
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#b7d700;"></span><span class="text-gray-500">51-100</span><span class="ml-auto text-yellow-400 font-medium">Moderate</span></div>
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#ff9d00;"></span><span class="text-gray-500">101-150</span><span class="ml-auto text-orange-400 font-medium">Unhealthy SG</span></div>
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#ff4c38;"></span><span class="text-gray-500">151-200</span><span class="ml-auto text-red-400 font-medium">Unhealthy</span></div>
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#b83cff;"></span><span class="text-gray-500">201-300</span><span class="ml-auto text-purple-400 font-medium">Very Unhealthy</span></div>
+                        <div class="flex items-center gap-1.5"><span class="aqi-dot w-1.5 h-1.5" style="background:#7e0023;"></span><span class="text-gray-500">301+</span><span class="ml-auto text-rose-500 font-medium">Hazardous</span></div>
+                    </div>
+                </div>
+
+                <hr class="border-white/5">
+
                 <!-- Weather Summary -->
-                <div class="lg:col-span-5 glass-card p-5">
-                    <h3 class="font-semibold text-sm mb-4">Weather Summary</h3>
-                    <div class="space-y-3" id="weatherSummary">
+                <div class="flex-grow">
+                    <h4 class="text-xs text-gray-500 mb-2">Weather</h4>
+                    <div class="space-y-2 text-[10px]" id="weatherSummary">
                         <!-- Filled by JS -->
                     </div>
                 </div>
