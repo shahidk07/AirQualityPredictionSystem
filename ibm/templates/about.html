@@ -1,11 +1,171 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>About AirIntel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#0b1118',
+                        primary: '#00e054',
+                        textMain: '#d1d5db',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b1118; /* Match home.html bg */
+            color: #d1d5db;
+        }
+        .section-divider {
+            border-bottom: 1px solid #1a2538;
+            padding-bottom: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .row-divider {
+            border-bottom: 1px solid #151e2e;
+        }
+        .glass {
+            background:rgba(15,23,42,.65);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,.08);
+        }
+        .green-gradient {
+            background:linear-gradient(90deg,#16d84a,#63e247);
+        }
+        .text-gradient {
+            background:linear-gradient(90deg,#22c55e,#65f15b);
+            background-clip:text;
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+    </style>
 </head>
-<body>
-    
+<body class="antialiased min-h-screen flex flex-col items-center py-4">
+
+    <!-- Navbar Section -->
+    <div class="w-full px-6">
+        <nav class="glass rounded-2xl px-6 py-4 mb-12">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'images/leaf1.svg' %}" class="w-12 h-12" alt="logo">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">
+                            Air<span class="text-gradient">Intel</span>
+                        </h1>
+                        <p class="text-gray-400 text-sm">
+                            AI-Powered Air Quality Prediction
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <ul class="hidden lg:flex items-center gap-10 font-medium ml-16 text-white">
+                    <li><a href="/" class="hover:text-green-400 transition">Home</a></li>
+                    <li><a href="/predict/" class="hover:text-green-400 transition">Predict</a></li>
+                    <li><a href="/insights/" class="hover:text-green-400 transition">Insights</a></li>
+                    <li><a href="/about/" class="text-green-400">About</a></li>
+                    <li><a href="/how_it_works/" class="hover:text-green-400 transition">How It Works</a></li>
+                </ul>
+
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-white">
+                        Explore Insights
+                    </a>
+                    <a href="/predict/" class="green-gradient px-6 py-2 rounded-lg font-semibold text-black hover:opacity-90 transition">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="w-full max-w-5xl px-2">
+        
+        <!-- About AirIntel -->
+        <div class="section-divider">
+            <h1 class="text-3xl font-bold text-white mb-5">About <span class="text-primary">AirIntel</span></h1>
+            <p class="text-[15px] leading-relaxed text-gray-300">
+                AirIntel is an end-to-end machine learning and web development project that predicts the Air Quality Index (AQI) using environmental, weather, and pollution data. The project was created to demonstrate the complete machine learning workflow—from feature engineering and model training to deployment within an interactive web application—while making AQI prediction accessible and easy to understand.
+            </p>
+        </div>
+
+        <!-- Why Manual Inputs? -->
+        <div class="section-divider">
+            <h2 class="text-[26px] font-bold text-white mb-5">Why <span class="text-primary">Manual Inputs?</span></h2>
+            <p class="text-[15px] leading-relaxed text-gray-300 mb-6">
+                Unlike commercial weather applications, AirIntel does not automatically fetch environmental data from live APIs. This is an intentional design decision made to emphasize the complete machine learning workflow rather than simply consuming external services.
+            </p>
+            <p class="text-[15px] leading-relaxed text-gray-300">
+                By allowing users to provide the environmental parameters manually, the application demonstrates how different input features influence the prediction process and provides a better understanding of how machine learning models transform raw data into meaningful AQI predictions.
+            </p>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="section-divider">
+            <h2 class="text-[26px] font-bold text-white mb-6">Technology <span class="text-primary">Stack</span></h2>
+            
+            <div class="flex flex-col">
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Frontend</div>
+                    <div class="text-gray-300 text-[15px]">HTML, Tailwind CSS, JavaScript</div>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Backend</div>
+                    <div class="text-gray-300 text-[15px]">Django (Python)</div>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Machine Learning</div>
+                    <div class="text-gray-300 text-[15px]">Scikit-learn, Pandas, NumPy</div>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Database</div>
+                    <div class="text-gray-300 text-[15px]">PostgreSQL</div>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Visualization</div>
+                    <div class="text-gray-300 text-[15px]">Chart.js</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connect With Me -->
+        <div>
+            <h2 class="text-[26px] font-bold text-white mb-5">Connect <span class="text-primary">With Me</span></h2>
+            <p class="text-[15px] leading-relaxed text-gray-300 mb-7">
+                AirIntel was designed and developed by <span class="text-primary font-medium">Shahid Khan</span> as a machine learning and full-stack web development project. If you'd like to explore the source code, discuss the project, or connect professionally, feel free to reach out.
+            </p>
+            
+            <div class="flex flex-col">
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">GitHub</div>
+                    <a href="https://github.com/shahidkhan-dev" target="_blank" rel="noopener noreferrer" class="text-gray-300 text-[15px] hover:text-white transition-colors">github.com/shahidkhan-dev</a>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">LinkedIn</div>
+                    <a href="https://linkedin.com/in/shahidkhan-dev" target="_blank" rel="noopener noreferrer" class="text-gray-300 text-[15px] hover:text-white transition-colors">linkedin.com/in/shahidkhan-dev</a>
+                </div>
+                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                    <div class="text-primary font-medium text-[15px]">Email</div>
+                    <a href="mailto:shahidkhan.dev@gmail.com" class="text-gray-300 text-[15px] hover:text-white transition-colors">shahidkhan.dev@gmail.com</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </body>
 </html>

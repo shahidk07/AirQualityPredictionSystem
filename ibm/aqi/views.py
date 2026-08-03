@@ -30,6 +30,9 @@ def predict(request):
 def insights(request):
     return render(request,'insights.html')
 
+def about(request):
+    return render(request,'about.html')
+
 def aqi_meter(request):
     return render(request,'aqi_meter.html')
 
