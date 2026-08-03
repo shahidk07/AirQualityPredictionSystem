@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - AI Air Quality Prediction</title>
+    <!-- Phosphor Icons for high quality 3D-like duotone icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            background-color: #0A0E17; /* Very dark blue/black background */
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .diagram-container {
+            position: relative;
+            width: 1200px;
+            height: 500px;
+            /* Scale down on smaller screens if necessary */
+            max-width: 100vw;
+        }
+
+        /* SVG Connections */
+        .svg-connections {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .connection-path {
+            fill: none;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            /* Glowing effect */
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .path-weather { stroke: #00d2ff; }
+        .path-pollutants { stroke: #a654ff; }
+        .path-factors { stroke: #00e054; }
+
+        .dashed-arrow {
+            fill: none;
+            stroke: #00d2ff;
+            stroke-width: 2.5;
+            stroke-dasharray: 8 6;
+            filter: drop-shadow(0 0 5px #00d2ff);
+        }
+
+        .arrow-head {
+            fill: #00d2ff;
+            filter: drop-shadow(0 0 5px #00d2ff);
+        }
+
+        /* Labels (INPUTS, AI PROCESSING, OUTPUT) */
+        .section-label {
+            position: absolute;
+            border: 1px solid rgba(38, 224, 127, 0.5);
+            color: #26E07F;
+            border-radius: 20px;
+            padding: 5px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            background: rgba(38, 224, 127, 0.08);
+            z-index: 10;
+        }
+
+        .label-inputs { top: 20px; left: 145px; }
+        .label-ai { top: 30px; left: 520px; }
+        .label-output { top: 20px; left: 955px; }
+
+        /* Input Cards */
+        .card {
+            background: #10151E;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            position: absolute;
+            z-index: 5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+            border: 1.5px solid transparent; /* Fallback */
+            background-clip: padding-box;
+        }
+        
+        /* Glowing borders via pseudo-element */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 18px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .input-card {
+            width: 280px;
+            height: 90px;
+            left: 60px;
+        }
+
+        /* Specific Input Cards */
+        .weather-card { top: 75px; }
+        .weather-card::before { background: linear-gradient(135deg, rgba(0,210,255,1) 0%, rgba(0,210,255,0.2) 100%); }
+        .weather-card { box-shadow: 0 0 20px rgba(0, 210, 255, 0.15); }
+
+        .pollutants-card { top: 205px; }
+        .pollutants-card::before { background: linear-gradient(135deg, rgba(166,84,255,1) 0%, rgba(166,84,255,0.2) 100%); }
+        .pollutants-card { box-shadow: 0 0 20px rgba(166, 84, 255, 0.15); }
+
+        .factors-card { top: 335px; }
+        .factors-card::before { background: linear-gradient(135deg, rgba(0,224,84,1) 0%, rgba(0,224,84,0.2) 100%); }
+        .factors-card { box-shadow: 0 0 20px rgba(0, 224, 84, 0.15); }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            margin-right: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-content h3 {
+            margin: 0 0 6px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .card-content p {
+            margin: 0;
+            font-size: 12px;
+            color: #A0AAB5;
+            line-height: 1.4;
+        }
+
+        /* AI Processing Center */
+        .ai-center {
+            position: absolute;
+            top: 100px;
+            left: 450px;
+            width: 300px;
+            height: 300px;
+            z-index: 10;
+        }
+
+        .ai-circle-outer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(0, 150, 255, 0.1) inset;
+        }
+        
+        .ai-circle-inner {
+            position: absolute;
+            top: 25px; left: 25px; right: 25px; bottom: 25px;
+            border: 1.5px dashed rgba(255,255,255,0.15);
+            border-radius: 50%;
+        }
+
+        /* Nodes on the AI circle */
+        .node {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px currentColor;
+            z-index: 11;
+        }
+        
+        /* Node positions for 300x300 circle (center 150,150) */
+        /* Nodes are positioned exactly on the radius (150px) */
+        .node-cyan-tl { top: 75px; left: 20px; color: #00d2ff; background: #00d2ff; }
+        .node-cyan-t { top: 0px; left: 150px; color: #00d2ff; background: #00d2ff; }
+        .node-cyan-tr { top: 75px; left: 280px; color: #00d2ff; background: #00d2ff; }
+        
+        .node-purple-l { top: 150px; left: 0px; color: #a654ff; background: #a654ff; }
+        
+        .node-green-bl { top: 225px; left: 20px; color: #00e054; background: #00e054; }
+        .node-green-b { top: 300px; left: 150px; color: #00e054; background: #00e054; }
+        
+        .node-yellow-r { top: 150px; left: 300px; color: #ffb800; background: #ffb800; }
+        .node-yellow-br { top: 225px; left: 280px; color: #ffb800; background: #ffb800; }
+
+        /* Brain / Platform */
+        .brain-platform-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .isometric-platform {
+            position: absolute;
+            bottom: 10px;
+            width: 90px;
+            height: 90px;
+            background: rgba(0, 150, 255, 0.15);
+            border: 2px solid rgba(0, 150, 255, 0.6);
+            transform: rotateX(65deg) rotateZ(45deg);
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.5), inset 0 0 20px rgba(0, 150, 255, 0.5);
+            border-radius: 12px;
+            z-index: 1;
+        }
+
+        .isometric-platform::after {
+            content: '';
+            position: absolute;
+            top: -15px; left: -15px; right: -15px; bottom: -15px;
+            border: 1px dashed rgba(0, 150, 255, 0.4);
+            border-radius: 18px;
+            pointer-events: none;
+        }
+
+        .brain-icon {
+            font-size: 85px;
+            color: #fff;
+            filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.8));
+            position: relative;
+            z-index: 2;
+            top: -15px;
+        }
+
+        /* Output Card */
+        .output-card {
+            width: 290px;
+            height: 330px;
+            top: 75px;
+            left: 850px;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 30px 20px;
+            background: linear-gradient(180deg, #10151E 0%, #0B0E14 100%);
+        }
+
+        .output-card::before {
+            background: linear-gradient(135deg, rgba(0,210,255,0.4) 0%, rgba(166,84,255,0.1) 50%, rgba(255,84,84,0.3) 100%);
+        }
+
+        .output-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .gauge-wrapper {
+            position: relative;
+            width: 220px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .aqi-value {
+            position: absolute;
+            bottom: 5px;
+            font-size: 58px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .aqi-status {
+            margin-top: 25px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffb800; /* Yellow */
+        }
+
+        .aqi-desc {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #A0AAB5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="diagram-container">
+        <!-- SVG Connections Layer -->
+        <svg class="svg-connections">
+            <!-- Weather to AI. Card right center (340, 120). Node (470, 175) -->
+            <path class="connection-path path-weather" d="M 340 120 C 400 120, 410 175, 470 175" />
+            
+            <!-- Pollutants to AI. Card right center (340, 250). Node (450, 250) -->
+            <path class="connection-path path-pollutants" d="M 340 250 C 390 250, 400 250, 450 250" />
+
+            <!-- Factors to AI. Card right center (340, 380). Node (470, 325) -->
+            <path class="connection-path path-factors" d="M 340 380 C 400 380, 410 325, 470 325" />
+
+            <!-- AI Output Arrow. From AI right node (750, 250) to Output Card (850, 250) -->
+            <path class="dashed-arrow" d="M 750 250 L 835 250" />
+            <polygon class="arrow-head" points="835,245 845,250 835,255" />
+        </svg>
+
+        <!-- Labels -->
+        <div class="section-label label-inputs">INPUTS</div>
+        <div class="section-label label-ai">AI PROCESSING</div>
+        <div class="section-label label-output">OUTPUT</div>
+
+        <!-- Input Cards -->
+        <div class="card input-card weather-card">
+            <div class="icon-box">
+                <i class="ph-duotone ph-cloud-sun" style="font-size: 40px; color: #00d2ff;"></i>
+            </div>
+            <div class="card-content">
+                <h3>Weather Data</h3>
+                <p>Temperature, Humidity,<br>Wind, Pressure, etc.</p>
+            </div>
+        </div>
+
+        <div class="card input-card pollutants-card">
+            <div class="icon-box">
+                <i class="ph-duotone ph-cloud-rain" style="font-size: 40px; color: #a654ff;"></i>
+            </div>
+            <div class="card-content">
+                <h3>Pollutants</h3>
+                <p>PM2.5, PM10, NO₂,<br>SO₂, CO, O₃, etc.</p>
+            </div>
+        </div>
+
+        <div class="card input-card factors-card">
+            <div class="icon-box">
+                <i class="ph-duotone ph-leaf" style="font-size: 40px; color: #00e054;"></i>
+            </div>
+            <div class="card-content">
+                <h3>Other Factors</h3>
+                <p>Location, Time, Season,<br>Weekend, etc.</p>
+            </div>
+        </div>
+
+        <!-- AI Center -->
+        <div class="ai-center">
+            <div class="ai-circle-outer"></div>
+            <div class="ai-circle-inner"></div>
+            
+            <div class="node node-cyan-tl"></div>
+            <div class="node node-cyan-t"></div>
+            <div class="node node-cyan-tr"></div>
+            <div class="node node-purple-l"></div>
+            <div class="node node-green-bl"></div>
+            <div class="node node-green-b"></div>
+            <div class="node node-yellow-r"></div>
+            <div class="node node-yellow-br"></div>
+
+            <div class="brain-platform-container">
+                <div class="isometric-platform"></div>
+                <i class="ph-duotone ph-brain brain-icon"></i>
+            </div>
+        </div>
+
+        <!-- Output Card -->
+        <div class="card output-card">
+            <div class="output-title">Predicted AQI</div>
+            
+            <div class="gauge-wrapper">
+                <!-- SVG Gauge -->
+                <svg viewBox="0 0 200 100" style="width: 100%; height: 100%; overflow: visible;">
+                    <defs>
+                        <!-- Creating 5 distinct stop points for clear segments -->
+                        <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#22c55e"/>
+                            <stop offset="25%" stop-color="#84cc16"/>
+                            <stop offset="50%" stop-color="#ffcc00"/>
+                            <stop offset="75%" stop-color="#f97316"/>
+                            <stop offset="100%" stop-color="#ef4444"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Rounded dashed arc to mimic individual colored blocks -->
+                    <path d="M 15 90 A 85 85 0 0 1 185 90" fill="none" stroke="url(#gaugeGradient)" stroke-width="16" stroke-linecap="round" stroke-dasharray="45 10"/>
+                </svg>
+                <div class="aqi-value">78</div>
+            </div>
+            
+            <div class="aqi-status">Moderate</div>
+            <div class="aqi-desc">Air quality is acceptable.</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

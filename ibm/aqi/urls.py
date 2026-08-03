@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("predict/", views.predict, name="predict"),
     path("insights/", views.insights, name="insights"),
+    path("about/", views.about, name="about"),
     path("aqi-meter/", views.aqi_meter, name="aqi_meter"),
 ]
 
