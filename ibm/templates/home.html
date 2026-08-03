@@ -71,7 +71,6 @@
             <ul class="hidden lg:flex items-center gap-10 font-medium ml-16">
 
                 <li><a href="#" class="text-green-400">Home</a></li>
-                <li><a href="#">Features</a></li>
                 <li><a href="/predict/">Predict</a></li>
                 <li><a href="/insights/">Insights</a></li>
                 <li><a href="#">About</a></li>
@@ -98,12 +97,11 @@
     </nav>
     <section class="relative w-full px-6 mt-12">
     
-         <!-- Background Glow -->
-    <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
 
-        <div class="absolute top-10 left-20 w-80 h-80 bg-green-500/10 blur-[120px] rounded-full"></div>
+        <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-green-500/20 blur-[150px] rounded-full"></div>
 
-        <div class="absolute bottom-0 right-20 w-96 h-96 bg-cyan-500/5 blur-[150px] rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full"></div>
 
     </div>
     
@@ -111,7 +109,7 @@
 
         <!-- Left Content -->
         <div>
-         <h1 class="text-6xl font-extrabold leading-tight">
+         <h1 class="text-7xl lg:text-8xl font-extrabold leading-tight">
 
     AI-Powered
 
@@ -170,7 +168,7 @@
 
 </div>
 <button
-    class="green-gradient mt-10 px-8 py-4 rounded-xl font-semibold text-black text-lg">
+    class="green-gradient mt-10 px-8 py-4 rounded-2xl font-semibold text-black text-lg shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:-translate-y-1 transition-all duration-300">
 
     Start Prediction →
 
@@ -179,49 +177,60 @@
 
         <!-- Right Illustration -->
         <div>
-<div class="glass rounded-3xl h-[550px] relative overflow-hidden p-8">
+<div class="glass rounded-3xl h-[550px] relative overflow-hidden p-8 flex flex-col justify-center">
 
     <!-- Glowing Circle -->
-    <div class="absolute w-72 h-72 rounded-full bg-green-500/20 blur-3xl top-16 left-1/2 -translate-x-1/2"></div>
+    <div class="absolute w-72 h-72 rounded-full bg-green-500/20 blur-3xl top-16 -right-10"></div>
 
-    <!-- AQI Card -->
-    <div class="relative mt-8 mx-auto w-64 glass rounded-2xl p-6 text-center">
+    <!-- Content -->
+    <h2 class="text-3xl font-bold mb-10 relative z-10">
+        Why Choose <span class="text-gradient">AirIntel</span>?
+    </h2>
 
-        <p class="text-gray-400 text-sm">Current AQI</p>
-
-        <h2 class="text-6xl font-bold text-green-400 mt-2">
-            42
-        </h2>
-
-        <p class="text-green-300 mt-2 font-medium">
-            Good
-        </p>
-
-    </div>
-
-    <!-- Mini Stats -->
-    <div class="relative mt-10 grid grid-cols-2 gap-4">
-
-        <div class="glass rounded-xl p-4">
-            <p class="text-gray-400 text-sm">Humidity</p>
-            <h3 class="text-2xl font-semibold mt-2">65%</h3>
+    <div class="space-y-6 relative z-10">
+        <!-- Feature 1 -->
+        <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center shrink-0 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                <i data-lucide="brain" class="text-green-400 w-7 h-7"></i>
+            </div>
+            <div class="pt-1">
+                <h3 class="text-xl font-semibold text-white">Accurate Predictions</h3>
+                <p class="text-gray-400 text-sm mt-2 leading-relaxed">ML models trained on environmental and pollution data.</p>
+            </div>
         </div>
 
-        <div class="glass rounded-xl p-4">
-            <p class="text-gray-400 text-sm">Temperature</p>
-            <h3 class="text-2xl font-semibold mt-2">28°C</h3>
+        <!-- Feature 2 -->
+        <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center shrink-0 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                <i data-lucide="map-pin" class="text-purple-400 w-7 h-7"></i>
+            </div>
+            <div class="pt-1">
+                <h3 class="text-xl font-semibold text-white">28 Indian Cities</h3>
+                <p class="text-gray-400 text-sm mt-2 leading-relaxed">Predict AQI across major Indian cities.</p>
+            </div>
         </div>
 
-        <div class="glass rounded-xl p-4">
-            <p class="text-gray-400 text-sm">Wind</p>
-            <h3 class="text-2xl font-semibold mt-2">12 km/h</h3>
+        <!-- Feature 3 -->
+        <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                <i data-lucide="heart" class="text-red-400 w-7 h-7"></i>
+            </div>
+            <div class="pt-1">
+                <h3 class="text-xl font-semibold text-white">Health Recommendations</h3>
+                <p class="text-gray-400 text-sm mt-2 leading-relaxed">Receive guidance based on predicted AQI.</p>
+            </div>
         </div>
 
-        <div class="glass rounded-xl p-4">
-            <p class="text-gray-400 text-sm">PM2.5</p>
-            <h3 class="text-2xl font-semibold mt-2">18 µg/m³</h3>
+        <!-- Feature 4 -->
+        <div class="flex items-start gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                <i data-lucide="bar-chart-3" class="text-blue-400 w-7 h-7"></i>
+            </div>
+            <div class="pt-1">
+                <h3 class="text-xl font-semibold text-white">Data-Driven Insights</h3>
+                <p class="text-gray-400 text-sm mt-2 leading-relaxed">Visualize trends and pollutant patterns.</p>
+            </div>
         </div>
-
     </div>
 
 </div>
@@ -230,132 +239,63 @@
     </div>
 
 </section>
+
 <section class="w-full px-6 py-12">
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <!-- Card 1 -->
-        <div
-    class="glass rounded-2xl p-6 border border-white/5 hover:border-green-500/40 transition-all duration-300 hover:-translate-y-2">
-
-    <div class="flex items-start gap-4">
-
-        <!-- Icon -->
-
-        <div
-            class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center">
-
-            <i data-lucide="chart-no-axes-column-increasing"
-               class="text-green-400 w-7 h-7"></i>
-
+        <div class="glass rounded-3xl p-6 border border-white/5 border-t-[3px] border-t-green-500/40 hover:border-t-green-400 hover:shadow-[0_10px_40px_-10px_rgba(34,197,94,0.3)] transition-all duration-300 hover:-translate-y-2">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
+                    <i data-lucide="map-pin" class="text-green-400 w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white">28</h3>
+                    <p class="mt-1 text-gray-400 text-sm font-medium">Indian Cities</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Content -->
-
-        <div>
-
-            <h3 class="text-lg font-semibold">
-                Accurate Predictions
-            </h3>
-
-            <p class="mt-2 text-gray-400 text-sm leading-6">
-
-                ML models trained on real environmental data for high accuracy.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
         <!-- Card 2 -->
-<div
-    class="glass rounded-2xl p-6 border border-white/5 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-2">
-
-    <div class="flex items-start gap-4">
-
-        <div
-            class="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center">
-
-            <i data-lucide="building-2"
-               class="text-purple-400 w-7 h-7"></i>
-
+        <div class="glass rounded-3xl p-6 border border-white/5 border-t-[3px] border-t-green-500/40 hover:border-t-green-400 hover:shadow-[0_10px_40px_-10px_rgba(34,197,94,0.3)] transition-all duration-300 hover:-translate-y-2">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
+                    <i data-lucide="layers" class="text-green-400 w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white">22</h3>
+                    <p class="mt-1 text-gray-400 text-sm font-medium">Environmental Features</p>
+                </div>
+            </div>
         </div>
 
-        <div>
-
-            <h3 class="text-lg font-semibold">
-                Multi-City Support
-            </h3>
-
-            <p class="mt-2 text-gray-400 text-sm leading-6">
-                Predict AQI for multiple cities with a fast and seamless experience.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
         <!-- Card 3 -->
-<div
-    class="glass rounded-2xl p-6 border border-white/5 hover:border-orange-500/40 transition-all duration-300 hover:-translate-y-2">
-
-    <div class="flex items-start gap-4">
-
-        <div
-            class="w-14 h-14 rounded-full bg-orange-500/10 flex items-center justify-center">
-
-            <i data-lucide="shield-plus"
-               class="text-orange-400 w-7 h-7"></i>
-
+        <div class="glass rounded-3xl p-6 border border-white/5 border-t-[3px] border-t-green-500/40 hover:border-t-green-400 hover:shadow-[0_10px_40px_-10px_rgba(34,197,94,0.3)] transition-all duration-300 hover:-translate-y-2">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
+                    <i data-lucide="bot" class="text-green-400 w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white whitespace-nowrap">Random Forest</h3>
+                    <p class="mt-1 text-gray-400 text-sm font-medium">AI Model</p>
+                </div>
+            </div>
         </div>
 
-        <div>
-
-            <h3 class="text-lg font-semibold">
-                Health Recommendations
-            </h3>
-
-            <p class="mt-2 text-gray-400 text-sm leading-6">
-                Get practical health guidance based on predicted air quality levels.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
         <!-- Card 4 -->
-<div
-    class="glass rounded-2xl p-6 border border-white/5 hover:border-blue-500/40 transition-all duration-300 hover:-translate-y-2">
-
-    <div class="flex items-start gap-4">
-
-        <div
-            class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center">
-
-            <i data-lucide="chart-column"
-               class="text-blue-400 w-7 h-7"></i>
-
+        <div class="glass rounded-3xl p-6 border border-white/5 border-t-[3px] border-t-green-500/40 hover:border-t-green-400 hover:shadow-[0_10px_40px_-10px_rgba(34,197,94,0.3)] transition-all duration-300 hover:-translate-y-2">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
+                    <i data-lucide="zap" class="text-green-400 w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white">&lt;1s</h3>
+                    <p class="mt-1 text-gray-400 text-sm font-medium">Instant Predictions</p>
+                </div>
+            </div>
         </div>
 
-        <div>
-
-            <h3 class="text-lg font-semibold">
-                Data-Driven Insights
-            </h3>
-
-            <p class="mt-2 text-gray-400 text-sm leading-6">
-                Explore trends and patterns with interactive charts and analytics.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
     </div>
 
 </section>
@@ -364,7 +304,10 @@
 
 <section class="w-full px-6 py-16">
 
-    <div class="glass relative overflow-hidden rounded-3xl h-[480px]">
+    <div class="glass relative overflow-hidden rounded-3xl h-[480px] shadow-[0_0_30px_rgba(34,197,94,0.1)] border border-green-500/20">
+
+        <!-- Glowing Accent inside Earth section -->
+        <div class="absolute w-[500px] h-[500px] rounded-full bg-green-500/10 blur-[120px] top-1/2 -translate-y-1/2 left-0 pointer-events-none"></div>
 
         <!-- Background Image -->
         <img
