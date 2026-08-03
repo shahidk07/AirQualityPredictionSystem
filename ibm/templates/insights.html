@@ -1,0 +1,456 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirIntel | Air Quality Insights</title>
+    <meta name="description" content="Explore air quality trends, pollutant distribution, and city-wise AQI analytics across India.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { inter: ['Inter', 'sans-serif'] } } } }
+    </script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#0b1120; color:#e2e8f0; min-height:100vh; }
+        .glass { background:rgba(15,23,42,.65); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.07); }
+        .glass-card { background:rgba(17,25,40,.75); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.06); border-radius:16px; }
+        .text-gradient { background:linear-gradient(90deg,#22c55e,#65f15b); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .green-gradient { background:linear-gradient(135deg,#16a34a,#22c55e); }
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:3px; }
+        .stat-icon { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .nav-link { position:relative; padding-bottom:4px; }
+        .nav-link.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:#22c55e; border-radius:1px; }
+        .glass-select { background:rgba(15,23,42,.8); border:1px solid rgba(255,255,255,.08); border-radius:8px; color:#e2e8f0; padding:6px 10px; font-size:13px; outline:none; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; padding-right:26px; }
+        .glass-select:focus { border-color:rgba(34,197,94,.4); }
+    </style>
+</head>
+<body class="font-inter">
+
+<!-- ===== NAVBAR ===== -->
+<div class="w-full px-6 pt-4">
+    <nav class="glass rounded-2xl px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="{% static 'images/leaf1.svg' %}" class="w-12 h-12" alt="logo">
+                <div>
+                    <h1 class="text-3xl font-bold">Air<span class="text-gradient">Intel</span></h1>
+                    <p class="text-gray-400 text-sm">AI-Powered Air Quality Prediction</p>
+                </div>
+            </div>
+            <ul class="hidden lg:flex items-center gap-10 font-medium ml-16">
+                <li><a href="/" class="nav-link text-gray-400 hover:text-white transition">Home</a></li>
+                <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">Features</a></li>
+                <li><a href="/predict/" class="nav-link text-gray-400 hover:text-white transition">Predict</a></li>
+                <li><a href="/insights/" class="nav-link active text-green-400">Insights</a></li>
+                <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">About</a></li>
+                <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">How It Works</a></li>
+            </ul>
+            <div class="flex gap-3">
+                <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-sm">Explore Insights</a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="px-6 mt-5">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold">Air Quality <span class="text-gradient">Insights</span></h1>
+            <p class="text-sm text-gray-500 mt-1">Explore air quality trends and patterns across India.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="glass flex items-center gap-2 px-3 py-2 rounded-lg">
+                <i data-lucide="map-pin" class="w-4 h-4 text-green-400"></i>
+                <select id="cityFilter" class="glass-select" onchange="refreshAll()">
+                    <option value="all">All Cities</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Lucknow">Lucknow</option>
+                    <option value="Patna">Patna</option>
+                    <option value="Gurugram">Gurugram</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Shillong">Shillong</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Chennai">Chennai</option>
+                </select>
+            </div>
+            <div class="glass flex items-center gap-2 px-3 py-2 rounded-lg">
+                <i data-lucide="calendar" class="w-4 h-4 text-green-400"></i>
+                <select id="dateFilter" class="glass-select" onchange="refreshAll()">
+                    <option value="jan-may">Jan 2025 - May 2025</option>
+                    <option value="jan-mar">Jan 2025 - Mar 2025</option>
+                    <option value="mar-may">Mar 2025 - May 2025</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATS ROW ===== -->
+<div class="px-6 mt-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <!-- Avg AQI -->
+        <div class="glass-card p-5 flex items-center gap-4">
+            <div class="stat-icon bg-green-500/10 border border-green-500/20">
+                <i data-lucide="gauge" class="w-6 h-6 text-green-400"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500">Average AQI</p>
+                <h2 id="statAvgAqi" class="text-3xl font-bold text-green-400">128</h2>
+                <p id="statAvgCat" class="text-xs text-yellow-400 font-medium">Moderate</p>
+                <p class="text-[10px] text-gray-500 mt-1">vs last period <span class="text-red-400">↓ 8%</span></p>
+            </div>
+        </div>
+        <!-- Most Polluted -->
+        <div class="glass-card p-5 flex items-center gap-4">
+            <div class="stat-icon bg-red-500/10 border border-red-500/20">
+                <i data-lucide="building-2" class="w-6 h-6 text-red-400"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500">Most Polluted City</p>
+                <h2 id="statMostCity" class="text-2xl font-bold">Delhi</h2>
+                <p id="statMostAqi" class="text-3xl font-bold text-red-400">290</p>
+                <p class="text-[10px] text-gray-500">Very Poor <span class="ml-4">AQI</span></p>
+            </div>
+        </div>
+        <!-- Cleanest -->
+        <div class="glass-card p-5 flex items-center gap-4">
+            <div class="stat-icon bg-green-500/10 border border-green-500/20">
+                <i data-lucide="trees" class="w-6 h-6 text-green-400"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500">Cleanest City</p>
+                <h2 id="statCleanCity" class="text-2xl font-bold">Shillong</h2>
+                <p id="statCleanAqi" class="text-3xl font-bold text-green-400">42</p>
+                <p class="text-[10px] text-green-400">Good</p>
+            </div>
+        </div>
+        <!-- Highest PM2.5 -->
+        <div class="glass-card p-5 flex items-center gap-4">
+            <div class="stat-icon bg-purple-500/10 border border-purple-500/20">
+                <i data-lucide="cloud" class="w-6 h-6 text-purple-400"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500">Highest PM2.5</p>
+                <h2 class="text-3xl font-bold"><span id="statPm25">210</span> <span class="text-sm font-normal text-gray-400">µg/m³</span></h2>
+                <p id="statPm25City" class="text-xs text-gray-500">Delhi</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MIDDLE ROW ===== -->
+<div class="px-6 mt-4">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+
+        <!-- AQI Trend Chart -->
+        <div class="xl:col-span-5 glass-card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-sm" id="trendTitle">AQI Trend (All Cities)</h3>
+                <select id="trendInterval" class="glass-select text-xs" onchange="refreshAll()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </div>
+            <div id="aqiTrendChart" style="width:100%;height:220px;"></div>
+        </div>
+
+        <!-- Pollutant Distribution -->
+        <div class="xl:col-span-4 glass-card p-5">
+            <h3 class="font-semibold text-sm mb-4">Pollutant Distribution (Avg)</h3>
+            <div id="pollutantDistChart" style="width:100%;height:220px;"></div>
+        </div>
+
+        <!-- Top Polluted Cities -->
+        <div class="xl:col-span-3 glass-card p-5">
+            <h3 class="font-semibold text-sm mb-4">Top Polluted Cities</h3>
+            <div class="space-y-3" id="topCitiesList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== BOTTOM ROW ===== -->
+<div class="px-6 mt-4 pb-6">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+
+        <!-- Weather Impact -->
+        <div class="xl:col-span-5 glass-card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-sm">Weather Impact on AQI</h3>
+                <select id="weatherParam" class="glass-select text-xs" onchange="refreshAll()">
+                    <option value="humidity">Humidity</option>
+                    <option value="wind">Wind Speed</option>
+                    <option value="temp">Temperature</option>
+                </select>
+            </div>
+            <div class="flex gap-4">
+                <div id="weatherScatterChart" style="width:60%;height:220px;"></div>
+                <div class="flex flex-col justify-center items-center text-center" style="width:40%;">
+                    <p class="text-xs text-gray-500">Correlation</p>
+                    <p class="text-3xl font-bold text-green-400 mt-1" id="corrValue">+0.62</p>
+                    <p class="text-sm font-semibold text-yellow-400 mt-1" id="corrLabel">Moderate</p>
+                    <p class="text-sm text-green-400" id="corrDir">Positive</p>
+                    <p class="text-[10px] text-gray-500 mt-2 leading-relaxed" id="corrDesc">Higher humidity is associated with higher AQI.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly AQI Overview -->
+        <div class="xl:col-span-4 glass-card p-5">
+            <h3 class="font-semibold text-sm mb-3">Monthly AQI Overview</h3>
+            <div id="monthlyAqiChart" style="width:100%;height:220px;"></div>
+            <div class="flex items-center gap-2 mt-2 justify-center">
+                <span class="w-3 h-3 rounded-sm bg-green-500 inline-block"></span>
+                <span class="text-xs text-gray-400">Average AQI</span>
+            </div>
+        </div>
+
+        <!-- Insights Summary -->
+        <div class="xl:col-span-3 glass-card p-5">
+            <h3 class="font-semibold text-sm mb-4">Insights Summary</h3>
+            <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                    <div class="stat-icon bg-red-500/10 border border-red-500/20" style="width:40px;height:40px;border-radius:10px;">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-red-400"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold">AQI peaked in April 2025</h4>
+                        <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">High pollution levels due to weather conditions and seasonal factors.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="stat-icon bg-orange-500/10 border border-orange-500/20" style="width:40px;height:40px;border-radius:10px;">
+                        <i data-lucide="wind" class="w-5 h-5 text-orange-400"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold">Wind speed improves AQI</h4>
+                        <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">Higher wind speed is associated with lower AQI levels.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="stat-icon bg-green-500/10 border border-green-500/20" style="width:40px;height:40px;border-radius:10px;">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-green-400"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold">Delhi remains the most polluted</h4>
+                        <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">Consistently high AQI due to traffic, industry and weather conditions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const cityDB = {
+    Delhi:     {aqi:290, pm25:210, pm10:180, no2:48, co:32, o3:35, so2:18, trend:[180,200,190,220,195,210,230,250,210,195,225,240,200,190,235,220,215,228,200,220,235,250,195,210,225,240,210,230,215,200]},
+    Lucknow:   {aqi:250, pm25:175, pm10:150, no2:38, co:25, o3:28, so2:15, trend:[150,160,155,180,165,170,185,200,175,165,190,180,168,158,195,185,175,188,165,180,190,200,165,175,185,195,170,185,175,165]},
+    Patna:     {aqi:230, pm25:160, pm10:140, no2:35, co:22, o3:25, so2:14, trend:[140,150,145,165,155,160,170,185,165,150,175,165,155,148,178,170,160,172,155,165,175,185,155,162,170,180,158,170,160,150]},
+    Gurugram:  {aqi:210, pm25:145, pm10:125, no2:32, co:20, o3:22, so2:12, trend:[130,140,135,155,145,148,158,170,150,140,162,155,145,138,165,158,148,160,142,155,162,170,145,155,160,168,148,158,150,140]},
+    Kolkata:   {aqi:205, pm25:140, pm10:120, no2:30, co:18, o3:20, so2:11, trend:[125,135,130,150,140,142,152,165,148,135,158,150,140,132,160,152,142,155,138,150,158,165,140,148,155,162,142,155,145,135]},
+    Shillong:  {aqi:42,  pm25:22,  pm10:30,  no2:8,  co:5,  o3:15, so2:4,  trend:[35,40,38,45,42,38,48,50,42,38,44,40,36,32,46,42,38,44,36,40,42,48,35,40,42,45,38,42,40,36]},
+    Mumbai:    {aqi:135, pm25:85,  pm10:78,  no2:22, co:14, o3:18, so2:9,  trend:[90,100,95,120,110,105,125,140,115,100,128,120,108,95,132,122,110,125,102,118,125,135,100,112,120,130,108,122,115,100]},
+    Bengaluru: {aqi:88,  pm25:48,  pm10:55,  no2:14, co:10, o3:16, so2:6,  trend:[60,68,65,80,72,70,82,90,75,68,85,78,70,62,88,80,72,82,66,75,80,88,65,72,78,85,70,80,72,65]},
+    Chennai:   {aqi:95,  pm25:52,  pm10:60,  no2:16, co:11, o3:17, so2:7,  trend:[65,72,70,85,78,75,88,95,80,72,90,82,75,68,92,85,78,86,72,80,85,92,70,78,82,88,75,82,78,70]}
+};
+const allCityNames = Object.keys(cityDB);
+const trendDataFull = [
+    {month:'Jan',key:'jan',values:[90,110,95,130,105,85,120,140,100,88,115,125,98,78,135,110,95,128,88,105,115,130,90,100,108,120,95,112,100,88]},
+    {month:'Feb',key:'feb',values:[100,120,115,95,130,145,110,98,135,105,125,140,108,90,118,128,105,112,130,100,95,115,138,108,120,100,95,110]},
+    {month:'Mar',key:'mar',values:[120,140,130,150,125,110,145,160,135,120,155,140,128,142,150,138,125,148,130,155,140,120,135,145,128,150,138,142,135,125,140]},
+    {month:'Apr',key:'apr',values:[160,180,150,200,175,190,168,210,155,185,195,170,205,165,188,178,195,162,185,200,175,168,190,155,180,195,170,205,188,160]},
+    {month:'May',key:'may',values:[130,145,125,110,140,135,120,155,128,138,115,142,130,125,148,132,118,140,128,135,122,145,130,138,125,118,142,135,128,130,125]}
+];
+const weatherParams = {
+    humidity: {label:'Humidity (%)', corr:'+0.62', strength:'Moderate', dir:'Positive', desc:'Higher humidity is associated with higher AQI.', slope:2.8, base:30, range:[0,100]},
+    wind:    {label:'Wind Speed (km/h)', corr:'-0.54', strength:'Moderate', dir:'Negative', desc:'Higher wind speed is associated with lower AQI.', slope:-3.5, base:280, range:[0,60]},
+    temp:    {label:'Temperature (°C)', corr:'+0.45', strength:'Weak', dir:'Positive', desc:'Higher temperature tends to increase AQI levels.', slope:3.2, base:50, range:[10,48]}
+};
+function getFiltered() {
+    const city = document.getElementById('cityFilter').value;
+    const dateRange = document.getElementById('dateFilter').value;
+    const interval = document.getElementById('trendInterval').value;
+    const param = document.getElementById('weatherParam').value;
+    let months;
+    if (dateRange === 'jan-mar') months = trendDataFull.filter(m => ['jan','feb','mar'].includes(m.key));
+    else if (dateRange === 'mar-may') months = trendDataFull.filter(m => ['mar','apr','may'].includes(m.key));
+    else months = [...trendDataFull];
+    let trendPoints;
+    if (city !== 'all') {
+        const cd = cityDB[city];
+        trendPoints = [];
+        months.forEach(m => {
+            const scale = d3.mean(m.values) / 128;
+            cd.trend.forEach(v => trendPoints.push(Math.round(v * scale)));
+        });
+    } else {
+        trendPoints = months.flatMap(m => m.values);
+    }
+    if (interval === 'weekly') {
+        const weekly = [];
+        for (let i = 0; i < trendPoints.length; i += 7) {
+            weekly.push(Math.round(d3.mean(trendPoints.slice(i, i+7))));
+        }
+        trendPoints = weekly;
+    }
+    const avgAqi = Math.round(d3.mean(trendPoints));
+    const sorted = [...allCityNames].sort((a,b) => cityDB[b].aqi - cityDB[a].aqi);
+    const mostPolluted = sorted[0];
+    const cleanest = sorted[sorted.length-1];
+    const topPM = sorted[0];
+    let pollutants;
+    if (city !== 'all') {
+        const cd = cityDB[city];
+        pollutants = [{name:'PM2.5',value:cd.pm25,color:'#ef4444'},{name:'PM10',value:cd.pm10,color:'#f97316'},{name:'NO₂',value:cd.no2,color:'#eab308'},{name:'CO',value:cd.co,color:'#22c55e'},{name:'O₃',value:cd.o3,color:'#3b82f6'},{name:'SO₂',value:cd.so2,color:'#a855f7'}];
+    } else {
+        pollutants = [{name:'PM2.5',value:128,color:'#ef4444'},{name:'PM10',value:96,color:'#f97316'},{name:'NO₂',value:32,color:'#eab308'},{name:'CO',value:18,color:'#22c55e'},{name:'O₃',value:22,color:'#3b82f6'},{name:'SO₂',value:12,color:'#a855f7'}];
+    }
+    const monthlyAqi = months.map(m => ({month:m.month, aqi:Math.round(d3.mean(city!=='all' ? cityDB[city].trend.map(v => v * d3.mean(m.values)/128) : m.values))}));
+    const topCities = sorted.slice(0,5).map((c,i) => ({rank:i+1, name:c, aqi:cityDB[c].aqi}));
+    return {trendPoints, months, avgAqi, mostPolluted, cleanest, topPM, pollutants, monthlyAqi, topCities, param};
+}
+function updateStats(d) {
+    const city = document.getElementById('cityFilter').value;
+    const cat = d.avgAqi <= 50 ? ['Good','text-green-400'] : d.avgAqi <= 100 ? ['Moderate','text-yellow-400'] : d.avgAqi <= 150 ? ['Unhealthy for SG','text-orange-400'] : d.avgAqi <= 200 ? ['Unhealthy','text-red-400'] : ['Very Poor','text-red-500'];
+    document.getElementById('statAvgAqi').textContent = d.avgAqi;
+    document.getElementById('statAvgAqi').className = 'text-3xl font-bold ' + cat[1];
+    document.getElementById('statAvgCat').textContent = cat[0];
+    document.getElementById('statAvgCat').className = 'text-xs font-medium ' + cat[1];
+    document.getElementById('statMostCity').textContent = d.mostPolluted;
+    document.getElementById('statMostAqi').textContent = cityDB[d.mostPolluted].aqi;
+    document.getElementById('statCleanCity').textContent = d.cleanest;
+    document.getElementById('statCleanAqi').textContent = cityDB[d.cleanest].aqi;
+    document.getElementById('statPm25').textContent = cityDB[d.topPM].pm25;
+    document.getElementById('statPm25City').textContent = d.topPM;
+    document.getElementById('trendTitle').textContent = city !== 'all' ? `AQI Trend (${city})` : 'AQI Trend (All Cities)';
+}
+function drawTrendChart(points, months) {
+    const el = document.getElementById('aqiTrendChart'); el.innerHTML = '';
+    const w = el.clientWidth, h = el.clientHeight;
+    const m = {top:10,right:15,bottom:30,left:35}, iw = w-m.left-m.right, ih = h-m.top-m.bottom;
+    const svg = d3.select('#aqiTrendChart').append('svg').attr('width',w).attr('height',h);
+    const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+    const data = points.map((v,i) => ({x:i,y:v}));
+    const x = d3.scaleLinear().domain([0,data.length-1]).range([0,iw]);
+    const yMax = Math.max(350, d3.max(points)+20);
+    const y = d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    [50,100,150,200,250,300].forEach(v => { if(v<yMax) g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','rgba(255,255,255,0.05)'); });
+    [0,50,100,150,200,250,300].forEach(v => { if(v<=yMax) g.append('text').attr('x',-8).attr('y',y(v)+4).text(v).attr('fill','#64748b').attr('font-size',10).attr('text-anchor','end'); });
+    const step = Math.floor(data.length / months.length);
+    months.forEach((mn,i) => {
+        g.append('text').attr('x',x(i*step)).attr('y',ih+20).text(mn.month+' 2025').attr('fill','#64748b').attr('font-size',9).attr('text-anchor','start');
+    });
+    const grad = svg.append('defs').append('linearGradient').attr('id','aG').attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+    grad.append('stop').attr('offset','0%').attr('stop-color','#22c55e').attr('stop-opacity',0.4);
+    grad.append('stop').attr('offset','100%').attr('stop-color','#22c55e').attr('stop-opacity',0.02);
+    g.append('path').datum(data).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','url(#aG)');
+    g.append('path').datum(data).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22c55e').attr('stroke-width',2);
+}
+function drawPollutantChart(pollutants) {
+    const el = document.getElementById('pollutantDistChart'); el.innerHTML = '';
+    const w = el.clientWidth, h = el.clientHeight;
+    const mg = {top:5,right:40,bottom:25,left:45}, iw = w-mg.left-mg.right, ih = h-mg.top-mg.bottom;
+    const svg = d3.select('#pollutantDistChart').append('svg').attr('width',w).attr('height',h);
+    const g = svg.append('g').attr('transform',`translate(${mg.left},${mg.top})`);
+    const maxVal = Math.max(150, d3.max(pollutants, d=>d.value)+10);
+    const y = d3.scaleBand().domain(pollutants.map(d=>d.name)).range([0,ih]).padding(0.35);
+    const x = d3.scaleLinear().domain([0,maxVal]).range([0,iw]);
+    [0,50,100,150].filter(v=>v<=maxVal).forEach(v => {
+        g.append('line').attr('x1',x(v)).attr('x2',x(v)).attr('y1',0).attr('y2',ih).attr('stroke','rgba(255,255,255,0.05)');
+        g.append('text').attr('x',x(v)).attr('y',ih+16).text(v).attr('fill','#64748b').attr('font-size',10).attr('text-anchor','middle');
+    });
+    g.append('text').attr('x',iw/2).attr('y',ih+28).text('Concentration (µg/m³)').attr('fill','#475569').attr('font-size',9).attr('text-anchor','middle');
+    pollutants.forEach(d => {
+        g.append('text').attr('x',-6).attr('y',y(d.name)+y.bandwidth()/2+4).text(d.name).attr('fill','#94a3b8').attr('font-size',11).attr('text-anchor','end');
+        g.append('rect').attr('x',0).attr('y',y(d.name)).attr('width',iw).attr('height',y.bandwidth()).attr('fill','rgba(255,255,255,0.03)').attr('rx',4);
+        g.append('rect').attr('x',0).attr('y',y(d.name)).attr('width',x(Math.min(d.value,maxVal))).attr('height',y.bandwidth()).attr('fill',d.color).attr('rx',4);
+        g.append('text').attr('x',x(Math.min(d.value,maxVal))+6).attr('y',y(d.name)+y.bandwidth()/2+4).text(d.value).attr('fill','#e2e8f0').attr('font-size',11).attr('font-weight',600);
+    });
+}
+function drawTopCities(cities) {
+    const el = document.getElementById('topCitiesList'); el.innerHTML = '';
+    cities.forEach(c => {
+        const pct = (c.aqi/300*100).toFixed(0);
+        el.innerHTML += `<div class="flex items-center gap-3"><span class="text-xs text-gray-500 w-4 text-right">${c.rank}</span><span class="text-sm font-medium w-20">${c.name}</span><div class="flex-1 h-3 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-red-500 transition-all" style="width:${pct}%"></div></div><span class="text-sm font-bold w-10 text-right">${c.aqi}</span></div>`;
+    });
+}
+function drawWeatherScatter(paramKey) {
+    const el = document.getElementById('weatherScatterChart'); el.innerHTML = '';
+    const wp = weatherParams[paramKey];
+    const w = el.clientWidth, h = el.clientHeight;
+    const mg = {top:10,right:10,bottom:30,left:35}, iw = w-mg.left-mg.right, ih = h-mg.top-mg.bottom;
+    const svg = d3.select('#weatherScatterChart').append('svg').attr('width',w).attr('height',h);
+    const g = svg.append('g').attr('transform',`translate(${mg.left},${mg.top})`);
+    const pts = [];
+    for (let i=0;i<80;i++) {
+        const xv = wp.range[0]+Math.random()*(wp.range[1]-wp.range[0]);
+        const yv = Math.max(20,Math.min(420, xv*wp.slope + wp.base + (Math.random()-0.5)*160));
+        pts.push({x:xv,y:yv});
+    }
+    const x = d3.scaleLinear().domain(wp.range).range([0,iw]);
+    const y = d3.scaleLinear().domain([0,420]).range([ih,0]);
+    g.append('text').attr('x',-8).attr('y',8).text('AQI').attr('fill','#64748b').attr('font-size',10);
+    const xTicks = d3.range(wp.range[0],wp.range[1]+1,(wp.range[1]-wp.range[0])/5);
+    xTicks.forEach(v => g.append('text').attr('x',x(v)).attr('y',ih+16).text(Math.round(v)).attr('fill','#64748b').attr('font-size',9).attr('text-anchor','middle'));
+    [100,200,300,400].forEach(v => {
+        g.append('text').attr('x',-8).attr('y',y(v)+3).text(v).attr('fill','#64748b').attr('font-size',9).attr('text-anchor','end');
+        g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','rgba(255,255,255,0.04)');
+    });
+    g.append('text').attr('x',iw/2).attr('y',ih+28).text(wp.label).attr('fill','#475569').attr('font-size',9).attr('text-anchor','middle');
+    pts.forEach(d => g.append('circle').attr('cx',x(d.x)).attr('cy',y(d.y)).attr('r',3.5).attr('fill','#22c55e').attr('opacity',0.6));
+    const sorted = [...pts].sort((a,b)=>a.x-b.x);
+    const avgP = []; const step = (wp.range[1]-wp.range[0])/8;
+    for (let i=wp.range[0];i<wp.range[1];i+=step) {
+        const near = sorted.filter(d=>d.x>=i&&d.x<i+step*1.5);
+        if (near.length) avgP.push({x:i+step/2,y:d3.mean(near,d=>d.y)});
+    }
+    g.append('path').datum(avgP).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22c55e').attr('stroke-width',2).attr('stroke-dasharray','6,4').attr('opacity',0.7);
+    document.getElementById('corrValue').textContent = wp.corr;
+    document.getElementById('corrLabel').textContent = wp.strength;
+    document.getElementById('corrDir').textContent = wp.dir;
+    document.getElementById('corrDir').className = wp.dir==='Positive' ? 'text-sm text-green-400' : 'text-sm text-red-400';
+    document.getElementById('corrDesc').textContent = wp.desc;
+}
+function drawMonthlyChart(data) {
+    const el = document.getElementById('monthlyAqiChart'); el.innerHTML = '';
+    const w = el.clientWidth, h = el.clientHeight;
+    const mg = {top:15,right:10,bottom:25,left:30}, iw = w-mg.left-mg.right, ih = h-mg.top-mg.bottom;
+    const svg = d3.select('#monthlyAqiChart').append('svg').attr('width',w).attr('height',h);
+    const g = svg.append('g').attr('transform',`translate(${mg.left},${mg.top})`);
+    const yMax = Math.max(200, d3.max(data,d=>d.aqi)+20);
+    const x = d3.scaleBand().domain(data.map(d=>d.month)).range([0,iw]).padding(0.4);
+    const y = d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    g.append('text').attr('x',-8).attr('y',8).text('AQI').attr('fill','#64748b').attr('font-size',10);
+    [0,50,100,150,200].filter(v=>v<=yMax).forEach(v => {
+        g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','rgba(255,255,255,0.05)');
+        g.append('text').attr('x',-8).attr('y',y(v)+4).text(v).attr('fill','#64748b').attr('font-size',9).attr('text-anchor','end');
+    });
+    data.forEach(d => {
+        const c = d.aqi>150?'#ef4444':'#22c55e';
+        g.append('rect').attr('x',x(d.month)).attr('y',y(d.aqi)).attr('width',x.bandwidth()).attr('height',ih-y(d.aqi)).attr('fill',c).attr('rx',4);
+        g.append('text').attr('x',x(d.month)+x.bandwidth()/2).attr('y',y(d.aqi)-6).text(d.aqi).attr('fill','#e2e8f0').attr('font-size',11).attr('font-weight',600).attr('text-anchor','middle');
+        g.append('text').attr('x',x(d.month)+x.bandwidth()/2).attr('y',ih+16).text(d.month).attr('fill','#94a3b8').attr('font-size',11).attr('text-anchor','middle');
+    });
+}
+function refreshAll() {
+    const d = getFiltered();
+    updateStats(d);
+    drawTrendChart(d.trendPoints, d.months);
+    drawPollutantChart(d.pollutants);
+    drawTopCities(d.topCities);
+    drawWeatherScatter(d.param);
+    drawMonthlyChart(d.monthlyAqi);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    refreshAll();
+    lucide.createIcons();
+});
+</script>
+</body>
+</html>

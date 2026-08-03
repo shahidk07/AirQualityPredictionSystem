@@ -16,14 +16,22 @@ def home(request):
     return render(request,'home.html')
             
     
+from django.http import JsonResponse
+
 def predict(request):
     print("Predict view called")
-    if(request.method=="POST"):
-        df=process_data(request)
+    if request.method == "POST":
+        df = process_data(request)
         result = model.predict(df)[0]
         print(result)
-        return render(request,'predict.html',{"result":result})
-    return render(request,'predict.html')
+        return JsonResponse({"result": result})
+    return render(request, 'predict.html')
+
+def insights(request):
+    return render(request,'insights.html')
+
+def aqi_meter(request):
+    return render(request,'aqi_meter.html')
 
 
 
