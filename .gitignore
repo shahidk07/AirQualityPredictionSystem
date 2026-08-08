@@ -223,6 +223,7 @@ datasets/*.csv
 
 # Project-specific local artifacts
 trained_models/*.pkl
+!trained_models/xgboost.pkl
 trained_models/*.joblib
 trained_models/*.h5
 trained_models/*.pt
@@ -231,3 +232,6 @@ trained_models/*.sav
 trained_models/*.model
 ibm/db.sqlite3
 *.sqlite3
+
+# Django collectstatic output
+ibm/staticfiles/
