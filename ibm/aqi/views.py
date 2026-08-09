@@ -28,7 +28,7 @@ def predict(request):
     if request.method == "POST":
         model = _get_model()
         df = process_data(request)
-        result = model.predict(df)[0]
+        result = float(model.predict(df)[0])
         print(result)
         return JsonResponse({"result": result})
     return render(request, 'predict.html')
