@@ -35,6 +35,7 @@
             background: #0b1120;
             color: #e2e8f0;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Glass card */
@@ -245,7 +246,7 @@
 <body class="font-inter">
 
 <!-- ===== NAVBAR ===== -->
-<div class="w-full px-6 pt-4">
+<div class="w-full px-3 sm:px-6 pt-4">
     <nav class="glass rounded-2xl px-6 py-4">
         <div class="flex items-center justify-between">
 
@@ -273,19 +274,34 @@
                 <li><a href="#">How It Works</a></li>
             </ul>
 
+            <button id="mobileMenuBtn" class="lg:hidden text-white p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
             <!-- Buttons -->
-            <div class="flex gap-3">
+            <div class="hidden lg:flex gap-3">
                 <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-sm">
                     Explore Insights
                 </a>
             </div>
 
         </div>
+        <div id="mobileMenu" class="hidden lg:hidden mt-4 pt-4 border-t border-white/10">
+            <ul class="flex flex-col gap-4 font-medium">
+                <li><a href="/" class="text-gray-300 hover:text-white transition">Home</a></li>
+                <li><a href="/predict/" class="text-green-400">Predict</a></li>
+                <li><a href="/insights/" class="text-gray-300 hover:text-white transition">Insights</a></li>
+                <li><a href="/about/" class="text-gray-300 hover:text-white transition">About</a></li>
+                <li><a href="/how_it_works/" class="text-gray-300 hover:text-white transition">How It Works</a></li>
+            </ul>
+            <div class="flex flex-col gap-3 mt-4 pb-2">
+                <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-center text-sm">Explore Insights</a>
+            </div>
+        </div>
     </nav>
 </div>
 
 <!-- ===== PAGE HEADER ===== -->
-<div class="px-6 mt-2">
+<div class="px-3 sm:px-6 mt-2">
     <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold">Predict <span class="text-gradient">Air Quality Index</span></h1>
@@ -311,11 +327,11 @@
 </div>
 
 <!-- ===== MAIN CONTENT ===== -->
-<div class="px-6 mt-5 pb-4">
+<div class="px-3 sm:px-6 mt-5 pb-4">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
         <!-- ===== LEFT PANEL – INPUT FORM (Col 4) ===== -->
-        <form method="POST" action="/predict/" id="predictForm" class="lg:col-span-4 flex flex-col h-full" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <form method="POST" action="/predict/" id="predictForm" class="lg:col-span-4 flex flex-col h-full lg:max-h-[calc(100vh-160px)] lg:overflow-y-auto lg:pr-1">
             {% csrf_token %}
             <div class="flex-1 space-y-3">
             <!-- 1. Location, Time & Weather Information -->
@@ -324,7 +340,7 @@
                     <span class="section-num">1</span>
                     <h3 class="font-semibold text-sm">Location, Time & Weather</h3>
                 </div>
-                <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                     <!-- City -->
                     <div>
                         <label class="text-[10px] text-gray-500 mb-0.5 block">City</label>
@@ -387,7 +403,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">Humidity (%)</label>
                         <input type="number" id="humidity" name="humidity" value="55" step="1" class="!text-xs">
@@ -405,7 +421,7 @@
                         <input type="number" id="precipitation" name="precipitation" value="0.0" step="0.1" class="!text-xs">
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">Pressure MSL</label>
                         <input type="number" id="pressureMSL" name="pressure_msl" value="1013" step="1" class="!text-xs">
@@ -423,7 +439,7 @@
                         <input type="number" id="cloudCover" name="cloud_cover" value="40" step="1" class="!text-xs">
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">Sunshine (s)</label>
                         <input type="number" id="sunshine" name="sunshine" value="3600" step="100" class="!text-xs">
@@ -437,7 +453,7 @@
                     <span class="section-num">2</span>
                     <h3 class="font-semibold text-sm">Air Pollutants</h3>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">PM2.5</label>
                         <input type="number" id="pm25" name="pm25" value="35" step="1" class="!text-xs">
@@ -455,7 +471,7 @@
                         <input type="number" id="co" name="co" value="450" step="1" class="!text-xs">
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">NO₂</label>
                         <input type="number" id="no2" name="no2" value="18" step="1" class="!text-xs">
@@ -473,7 +489,7 @@
                         <input type="number" id="dust" name="dust" value="100" step="1" class="!text-xs">
                     </div>
                 </div>
-                <div class="grid grid-cols-4 gap-1.5 mt-1.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-1.5">
                     <div class="input-card !p-1.5">
                         <label class="!text-[9px]">AOD</label>
                         <input type="number" id="aod" name="aod" value="0.35" step="0.01" class="!text-xs">
@@ -519,7 +535,7 @@
         </form>
 
         <!-- ===== MIDDLE PANEL – PREDICTION (Col 5) ===== -->
-        <div class="lg:col-span-5 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <div class="lg:col-span-5 space-y-3 lg:max-h-[calc(100vh-160px)] lg:overflow-y-auto lg:pr-1">
 
             <!-- Prediction Result Card -->
             <div class="glass-card p-4 flex flex-col h-auto">
@@ -622,7 +638,7 @@
         </div>
 
         <!-- ===== RIGHT PANEL – DETAILS (Col 3) ===== -->
-        <div class="lg:col-span-3 space-y-3" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 4px;">
+        <div class="lg:col-span-3 space-y-3 lg:max-h-[calc(100vh-160px)] lg:overflow-y-auto lg:pr-1">
             <div class="glass-card p-4 flex flex-col h-full space-y-4">
                 
                 <!-- Category -->
@@ -666,9 +682,9 @@
 </div>
 
 <!-- ===== FOOTER ===== -->
-<div class="px-6 pb-6 mt-2">
+<div class="px-3 sm:px-6 pb-6 mt-2">
     <div class="glass-card p-5">
-        <div class="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 items-start">
             <!-- Did you know -->
             <div class="lg:col-span-1">
                 <h4 class="font-bold text-sm mb-1">Did you know?</h4>

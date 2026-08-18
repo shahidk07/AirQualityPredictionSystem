@@ -15,7 +15,7 @@
     </script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; background:#0b1120; color:#e2e8f0; min-height:100vh; }
+        body { font-family:'Inter',sans-serif; background:#0b1120; color:#e2e8f0; min-height:100vh; overflow-x:hidden; }
         .glass { background:rgba(15,23,42,.65); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.07); }
         .glass-card { background:rgba(17,25,40,.75); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.06); border-radius:16px; }
         .text-gradient { background:linear-gradient(90deg,#22c55e,#65f15b); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -33,7 +33,7 @@
 <body class="font-inter">
 
 <!-- ===== NAVBAR ===== -->
-<div class="w-full px-6 pt-4">
+<div class="w-full px-3 sm:px-6 pt-4">
     <nav class="glass rounded-2xl px-6 py-4">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -50,21 +50,36 @@
                 <li><a href="/about/" class="nav-link text-gray-400 hover:text-white transition">About</a></li>
                 <li><a href="#" class="nav-link text-gray-400 hover:text-white transition">How It Works</a></li>
             </ul>
-            <div class="flex gap-3">
+            <button id="mobileMenuBtn" class="lg:hidden text-white p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <div class="hidden lg:flex gap-3">
                 <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-sm">Explore Insights</a>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden lg:hidden mt-4 pt-4 border-t border-white/10">
+            <ul class="flex flex-col gap-4 font-medium">
+                <li><a href="/" class="text-gray-300 hover:text-white transition">Home</a></li>
+                <li><a href="/predict/" class="text-gray-300 hover:text-white transition">Predict</a></li>
+                <li><a href="/insights/" class="text-green-400">Insights</a></li>
+                <li><a href="/about/" class="text-gray-300 hover:text-white transition">About</a></li>
+                <li><a href="/how_it_works/" class="text-gray-300 hover:text-white transition">How It Works</a></li>
+            </ul>
+            <div class="flex flex-col gap-3 mt-4 pb-2">
+                <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-center text-sm">Explore Insights</a>
             </div>
         </div>
     </nav>
 </div>
 
 <!-- ===== PAGE HEADER ===== -->
-<div class="px-6 mt-5">
+<div class="px-3 sm:px-6 mt-5">
     <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold">Air Quality <span class="text-gradient">Insights</span></h1>
             <p class="text-sm text-gray-500 mt-1">Explore air quality trends and patterns across India.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
             <div class="glass flex items-center gap-2 px-3 py-2 rounded-lg">
                 <i data-lucide="map-pin" class="w-4 h-4 text-green-400"></i>
                 <select id="cityFilter" class="glass-select" onchange="refreshAll()">
@@ -93,7 +108,7 @@
 </div>
 
 <!-- ===== STATS ROW ===== -->
-<div class="px-6 mt-4">
+<div class="px-3 sm:px-6 mt-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <!-- Avg AQI -->
         <div class="glass-card p-5 flex items-center gap-4">
@@ -146,7 +161,7 @@
 </div>
 
 <!-- ===== MIDDLE ROW ===== -->
-<div class="px-6 mt-4">
+<div class="px-3 sm:px-6 mt-4">
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
 
         <!-- AQI Trend Chart -->
@@ -176,7 +191,7 @@
 </div>
 
 <!-- ===== BOTTOM ROW ===== -->
-<div class="px-6 mt-4 pb-6">
+<div class="px-3 sm:px-6 mt-4 pb-6">
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
 
         <!-- Weather Impact -->
@@ -189,9 +204,9 @@
                     <option value="temp">Temperature</option>
                 </select>
             </div>
-            <div class="flex gap-4">
-                <div id="weatherScatterChart" style="width:60%;height:220px;"></div>
-                <div class="flex flex-col justify-center items-center text-center" style="width:40%;">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div id="weatherScatterChart" class="w-full sm:w-[60%]" style="height:220px;"></div>
+                <div class="flex flex-col justify-center items-center text-center w-full sm:w-[40%]">
                     <p class="text-xs text-gray-500">Correlation</p>
                     <p class="text-3xl font-bold text-green-400 mt-1" id="corrValue">+0.62</p>
                     <p class="text-sm font-semibold text-yellow-400 mt-1" id="corrLabel">Moderate</p>
@@ -449,6 +464,12 @@ function refreshAll() {
 document.addEventListener('DOMContentLoaded', () => {
     refreshAll();
     lucide.createIcons();
+});
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => refreshAll(), 250);
 });
 </script>
 </body>

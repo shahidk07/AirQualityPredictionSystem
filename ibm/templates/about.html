@@ -27,6 +27,7 @@
         body {
             background-color: #0b1118; /* Match home.html bg */
             color: #d1d5db;
+            overflow-x: hidden;
         }
         .section-divider {
             border-bottom: 1px solid #1a2538;
@@ -55,7 +56,7 @@
 <body class="antialiased min-h-screen flex flex-col items-center py-4">
 
     <!-- Navbar Section -->
-    <div class="w-full px-6">
+    <div class="w-full px-3 sm:px-6">
         <nav class="glass rounded-2xl px-6 py-4 mb-12">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
@@ -81,7 +82,10 @@
                 </ul>
 
                 <!-- Buttons -->
-                <div class="flex gap-3">
+                <button id="mobileMenuBtn" class="lg:hidden text-white p-2" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="hidden lg:flex gap-3">
                     <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-white">
                         Explore Insights
                     </a>
@@ -90,11 +94,25 @@
                     </a>
                 </div>
             </div>
+            
+            <div id="mobileMenu" class="hidden lg:hidden mt-4 pt-4 border-t border-white/10">
+                <ul class="flex flex-col gap-4 font-medium text-white">
+                    <li><a href="/" class="text-gray-300 hover:text-white transition">Home</a></li>
+                    <li><a href="/predict/" class="text-gray-300 hover:text-white transition">Predict</a></li>
+                    <li><a href="/insights/" class="text-gray-300 hover:text-white transition">Insights</a></li>
+                    <li><a href="/about/" class="text-green-400">About</a></li>
+                    <li><a href="/how_it_works/" class="text-gray-300 hover:text-white transition">How It Works</a></li>
+                </ul>
+                <div class="flex flex-col gap-3 mt-4 pb-2">
+                    <a href="/insights/" class="border border-gray-700 px-5 py-2 rounded-lg hover:border-green-500 transition text-white text-center">Explore Insights</a>
+                    <a href="/predict/" class="green-gradient px-6 py-2 rounded-lg font-semibold text-black text-center">Get Started</a>
+                </div>
+            </div>
         </nav>
     </div>
 
     <!-- Main Content -->
-    <div class="w-full max-w-5xl px-2">
+    <div class="w-full max-w-5xl px-4 sm:px-6">
         
         <!-- About AirIntel -->
         <div class="section-divider">
@@ -120,23 +138,23 @@
             <h2 class="text-[26px] font-bold text-white mb-6">Technology <span class="text-primary">Stack</span></h2>
             
             <div class="flex flex-col">
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Frontend</div>
                     <div class="text-gray-300 text-[15px]">HTML, Tailwind CSS, JavaScript</div>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Backend</div>
                     <div class="text-gray-300 text-[15px]">Django (Python)</div>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Machine Learning</div>
                     <div class="text-gray-300 text-[15px]">Scikit-learn, Pandas, NumPy</div>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Database</div>
                     <div class="text-gray-300 text-[15px]">PostgreSQL</div>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Visualization</div>
                     <div class="text-gray-300 text-[15px]">Chart.js</div>
                 </div>
@@ -151,15 +169,15 @@
             </p>
             
             <div class="flex flex-col">
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">GitHub</div>
                     <a href="https://github.com/shahidkhan-dev" target="_blank" rel="noopener noreferrer" class="text-gray-300 text-[15px] hover:text-white transition-colors">github.com/shahidkhan-dev</a>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">LinkedIn</div>
                     <a href="https://linkedin.com/in/shahidkhan-dev" target="_blank" rel="noopener noreferrer" class="text-gray-300 text-[15px] hover:text-white transition-colors">linkedin.com/in/shahidkhan-dev</a>
                 </div>
-                <div class="grid grid-cols-[200px_1fr] py-3.5 row-divider">
+                <div class="flex flex-col gap-1 sm:grid sm:grid-cols-[200px_1fr] py-3.5 row-divider">
                     <div class="text-primary font-medium text-[15px]">Email</div>
                     <a href="mailto:shahidkhan.dev@gmail.com" class="text-gray-300 text-[15px] hover:text-white transition-colors">shahidkhan.dev@gmail.com</a>
                 </div>
