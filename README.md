@@ -1,5 +1,5 @@
 # Air Quality Prediction System Using Machine Learning
-
+## Live url:  https://airqualitypredictionsystem-1.onrender.com/predict/
 ## Abstract
 
 Air pollution has become one of the most significant environmental and public health challenges affecting urban areas. Increasing emissions from vehicles, industries, construction activities, and seasonal events such as crop burning contribute to deteriorating air quality. The Air Quality Index (AQI) is widely used to represent the concentration of pollutants and the associated health risks. Accurate prediction of AQI enables governments, environmental agencies, and the general public to take preventive measures before pollution reaches hazardous levels.
@@ -24,6 +24,8 @@ The system is further designed to generate AQI forecasts that can be integrated 
 * Evaluate model performance using standard regression metrics.
 * Develop a dashboard to visualize AQI predictions and environmental insights.
 
+
+##Imp Notice ::The app currently uses XG Boost Model even though Random Forest Performed Better because of Model Size Constraint.
 ## System Workflow
 
 ```text
